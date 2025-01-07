@@ -1,0 +1,11 @@
+Betreff: Nachfrage: Eingangsbestätigung meiner Bewerbung
+
+Sehr geehrte/r {{ANSPRECHPARTNER}},
+
+ich hoffe, diese Nachricht erreicht Sie gut. Am {{BEWERBUNGSDATUM}} habe ich mich bei Ihrem Unternehmen für die Position "{{STELLE}}" beworben. Da ich bisher keine Bestätigung über den Eingang meiner Unterlagen erhalten habe, wollte ich höflich nachfragen, ob meine Bewerbung bei Ihnen angekommen ist.
+
+Ich freue mich über eine kurze Rückmeldung. Für Rückfragen stehe ich Ihnen selbstverständlich gerne zur Verfügung.
+
+Mit freundlichen Grüßen,  
+{{MEIN_NAME}}  
+{{MEINE_KONTAKTDATEN}}

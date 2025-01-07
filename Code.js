@@ -80,6 +80,18 @@ function handleStatus1(row, index, sheet) {
     (today - dateSubmitted) / (1000 * 60 * 60 * 24)
   );
 
+  const placeholderValues = {
+    BEWERBUNGSDATUM: Utilities.formatDate(
+      dateSubmitted,
+      Session.getScriptTimeZone(),
+      "dd.MM.yyyy"
+    ),
+    STELLE: row[JOB_DESCRIPTION_COLUMN_INDEX],
+    UNTERNEHMEN: row[COMPANY_COLUMN_INDEX],
+    MEIN_NAME: "Dein Name", // Dynamisch anpassen, falls in Tabelle vorhanden
+    MEINE_KONTAKTDATEN: "Deine Kontaktdaten", // Dynamisch anpassen, falls in Tabelle vorhanden
+  };
+
   if (daysSinceSubmission == 14) {
     createTask(
       "Eingangsbestätigung nachfragen",
@@ -88,6 +100,7 @@ function handleStatus1(row, index, sheet) {
       index,
       FIRST_FOLLOWUP_COLUMN_INDEX
     );
+    createEmailFromTemplate("status1_first_request.txt", placeholderValues);
   } else if (daysSinceSubmission == 24) {
     createTask(
       "Erneut Eingangsbestätigung nachfragen",
@@ -96,6 +109,7 @@ function handleStatus1(row, index, sheet) {
       index,
       SECOND_FOLLOWUP_COLUMN_INDEX
     );
+    createEmailFromTemplate("status1_second_request.txt", placeholderValues);
   } else if (daysSinceSubmission == 38) {
     sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
   }
@@ -104,12 +118,33 @@ function handleStatus1(row, index, sheet) {
 // Status 2: Eingang bestätigt
 function handleStatus2(row, index, sheet) {
   const dateSubmitted = new Date(row[DATE_SUBMITTED_COLUMN_INDEX]);
+  const lastFollowUpDate = new Date(
+    row[FIRST_FOLLOWUP_COLUMN_INDEX] || dateSubmitted
+  );
   const today = new Date();
-  const daysSinceSubmission = Math.floor(
-    (today - dateSubmitted) / (1000 * 60 * 60 * 24)
+  const daysSinceLastFollowUp = Math.floor(
+    (today - lastFollowUpDate) / (1000 * 60 * 60 * 24)
   );
 
-  if (daysSinceSubmission == 25) {
+  const placeholderValues = {
+    BEWERBUNGSDATUM: Utilities.formatDate(
+      dateSubmitted,
+      Session.getScriptTimeZone(),
+      "dd.MM.yyyy"
+    ),
+    STELLE: row[JOB_DESCRIPTION_COLUMN_INDEX],
+    UNTERNEHMEN: row[COMPANY_COLUMN_INDEX],
+    ANSPRECHPARTNER: row[CONTACT_PERSON_COLUMN_INDEX] || "Ansprechpartner",
+    MEIN_NAME: "Dein Name",
+    MEINE_KONTAKTDATEN: "Deine Kontaktdaten",
+    DATUM_DER_NACHFRAGE: Utilities.formatDate(
+      lastFollowUpDate,
+      Session.getScriptTimeZone(),
+      "dd.MM.yyyy"
+    ),
+  };
+
+  if (daysSinceLastFollowUp === 25) {
     createTask(
       "Bearbeitungsstand nachfragen",
       row,
@@ -117,7 +152,8 @@ function handleStatus2(row, index, sheet) {
       index,
       FIRST_FOLLOWUP_COLUMN_INDEX
     );
-  } else if (daysSinceSubmission == 35) {
+    createEmailFromTemplate("status2_first_request.txt", placeholderValues);
+  } else if (daysSinceLastFollowUp === 35) {
     createTask(
       "Erneut Bearbeitungsstand nachfragen",
       row,
@@ -125,7 +161,8 @@ function handleStatus2(row, index, sheet) {
       index,
       SECOND_FOLLOWUP_COLUMN_INDEX
     );
-  } else if (daysSinceSubmission == 49) {
+    createEmailFromTemplate("status2_second_request.txt", placeholderValues);
+  } else if (daysSinceLastFollowUp === 49) {
     sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
   }
 }
@@ -133,12 +170,33 @@ function handleStatus2(row, index, sheet) {
 // Status 3: Bearbeitung
 function handleStatus3(row, index, sheet) {
   const dateSubmitted = new Date(row[DATE_SUBMITTED_COLUMN_INDEX]);
+  const lastFollowUpDate = new Date(
+    row[FIRST_FOLLOWUP_COLUMN_INDEX] || dateSubmitted
+  );
   const today = new Date();
-  const daysSinceSubmission = Math.floor(
-    (today - dateSubmitted) / (1000 * 60 * 60 * 24)
+  const daysSinceLastFollowUp = Math.floor(
+    (today - lastFollowUpDate) / (1000 * 60 * 60 * 24)
   );
 
-  if (daysSinceSubmission == 25) {
+  const placeholderValues = {
+    BEWERBUNGSDATUM: Utilities.formatDate(
+      dateSubmitted,
+      Session.getScriptTimeZone(),
+      "dd.MM.yyyy"
+    ),
+    STELLE: row[JOB_DESCRIPTION_COLUMN_INDEX],
+    UNTERNEHMEN: row[COMPANY_COLUMN_INDEX],
+    ANSPRECHPARTNER: row[CONTACT_PERSON_COLUMN_INDEX] || "Ansprechpartner",
+    MEIN_NAME: "Dein Name",
+    MEINE_KONTAKTDATEN: "Deine Kontaktdaten",
+    DATUM_DER_NACHFRAGE: Utilities.formatDate(
+      lastFollowUpDate,
+      Session.getScriptTimeZone(),
+      "dd.MM.yyyy"
+    ),
+  };
+
+  if (daysSinceLastFollowUp === 25) {
     createTask(
       "Bearbeitungsstand prüfen",
       row,
@@ -146,20 +204,54 @@ function handleStatus3(row, index, sheet) {
       index,
       FIRST_FOLLOWUP_COLUMN_INDEX
     );
-  } else if (daysSinceSubmission == 39) {
+    createEmailFromTemplate("status3_request_update.txt", placeholderValues);
+  } else if (daysSinceLastFollowUp === 39) {
     sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
+  }
+
+  // Zusätzliche Rückmeldungsprüfung
+  const response = row[RESPONSE_COLUMN_INDEX] || ""; // Hier sollte der Rückmeldungsstatus aus der Tabelle gelesen werden
+
+  if (response.toLowerCase().includes("absage")) {
+    sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(7); // Status auf "Abgelehnt" setzen
+  } else if (response.toLowerCase().includes("einladung")) {
+    sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(4); // Status auf "Einladung Bewerbungsgespräch" setzen
+  } else if (response.toLowerCase().includes("noch in bearbeitung")) {
+    const daysSinceResponse = Math.floor(
+      (today - new Date(row[RESPONSE_DATE_COLUMN_INDEX])) /
+        (1000 * 60 * 60 * 24)
+    );
+
+    if (daysSinceResponse >= 14) {
+      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
+    } else if (daysSinceResponse >= 90) {
+      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(7); // Status auf "Abgelehnt" setzen
+    }
   }
 }
 
 // Status 4: Einladung Bewerbungsgespräch
 function handleStatus4(row, index, sheet) {
-  const dateSubmitted = new Date(row[DATE_SUBMITTED_COLUMN_INDEX]);
+  const interviewDate = new Date(row[INTERVIEW_DATE_COLUMN_INDEX]);
   const today = new Date();
-  const daysSinceSubmission = Math.floor(
-    (today - dateSubmitted) / (1000 * 60 * 60 * 24)
+  const daysSinceInterview = Math.floor(
+    (today - interviewDate) / (1000 * 60 * 60 * 24)
   );
 
-  if (daysSinceSubmission == 20) {
+  const placeholderValues = {
+    GESPRÄCHSDATUM: Utilities.formatDate(
+      interviewDate,
+      Session.getScriptTimeZone(),
+      "dd.MM.yyyy"
+    ),
+    STELLE: row[JOB_DESCRIPTION_COLUMN_INDEX],
+    UNTERNEHMEN: row[COMPANY_COLUMN_INDEX],
+    ANSPRECHPARTNER: row[CONTACT_PERSON_COLUMN_INDEX] || "Ansprechpartner",
+    MEIN_NAME: "Dein Name",
+    MEINE_KONTAKTDATEN: "Deine Kontaktdaten",
+  };
+
+  if (daysSinceInterview === 20) {
     createTask(
       "Nachfassen nach Gespräch",
       row,
@@ -167,16 +259,13 @@ function handleStatus4(row, index, sheet) {
       index,
       FIRST_FOLLOWUP_COLUMN_INDEX
     );
-  } else if (daysSinceSubmission == 34) {
+    createEmailFromTemplate(
+      "status4_followup_interview.txt",
+      placeholderValues
+    );
+  } else if (daysSinceInterview === 34) {
     sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
   }
-}
-
-// Status 5: Erfolgreich
-function handleStatus5(row, index, sheet) {
-  Logger.log(
-    `Bewerbung bei ${row[COMPANY_COLUMN_INDEX]} erfolgreich abgeschlossen.`
-  );
 }
 
 // Status 6: Keine Reaktion

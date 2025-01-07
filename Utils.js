@@ -62,13 +62,44 @@ function ensureBewerbungenFolder() {
 }
 
 /**
+ * Überprüft, ob der Ordner "templates" im Bewerbungen-Hauptordner existiert.
+ * Falls nicht, wird der Ordner erstellt und die ID in der Config.js gespeichert.
+ *
+ * @returns {GoogleAppsScript.Drive.Folder} - Der existierende oder neu erstellte Templates-Ordner.
+ */
+function ensureTemplatesFolder() {
+  const mainFolderId = getConfigValue("FOLDER_ID");
+  const mainFolder = DriveApp.getFolderById(mainFolderId);
+  const templatesFolderName = "templates";
+
+  let templatesFolder = mainFolder.getFoldersByName(templatesFolderName);
+
+  if (templatesFolder.hasNext()) {
+    templatesFolder = templatesFolder.next();
+    Logger.log(
+      `Der Ordner "${templatesFolderName}" existiert bereits. ID: ${templatesFolder.getId()}`
+    );
+  } else {
+    templatesFolder = mainFolder.createFolder(templatesFolderName);
+    Logger.log(
+      `Der Ordner "${templatesFolderName}" wurde neu erstellt. ID: ${templatesFolder.getId()}`
+    );
+  }
+
+  // Speichere die ID in der Config.js
+  setConfigValue("TEMPLATES_FOLDER_ID", templatesFolder.getId());
+
+  return templatesFolder;
+}
+
+/**
  * Überprüft, ob das Google Sheet "Bewerbungstracker" im Ordner "Bewerbungen" existiert.
  * Falls nicht, wird es erstellt. Überprüft auch die Struktur des Sheets
  * und passt sie bei Bedarf an. Speichert die Sheet-ID in der Konfigurationsdatei.
  */
 function ensureBewerbungenSheet() {
   const folderID = getConfigValue("FOLDER_ID");
-  const folder = DriveApp.getFoldersByName(folderID);
+  const folder = DriveApp.getFolderById(folderID);
   const sheetName = "Bewerbungstracker";
   const requiredColumns = [
     "BewerbungsID",
@@ -135,7 +166,7 @@ function ensureBewerbungenSheet() {
  * @param {string} value - Der zu speichernde Wert.
  */
 function setConfigValue(key, value) {
-  const folder = ensureBewerbungenFolder(); // Stellt sicher, dass der Ordner existiert
+  const folder = ensureBewerbungenFolder();
   const fileName = "Config.js";
   let file = folder.getFilesByName(fileName);
 
@@ -174,4 +205,60 @@ function getConfigValue(key) {
   const content = file.next().getBlob().getDataAsString();
   const match = new RegExp(`const ${key} = "(.*?)";`).exec(content);
   return match ? match[1] : null;
+}
+
+/**
+ * Erstellt eine E-Mail basierend auf einer Template-Datei.
+ *
+ * @param {string} templateFileName - Der Name der Template-Datei (z. B. 'status1_first_request.txt').
+ * @param {Object} placeholderValues - Ein Objekt mit den Platzhaltern und ihren Werten.
+ */
+function createEmailFromTemplate(templateFileName, placeholderValues) {
+  const folderId = getConfigValue("TEMPLATES_FOLDER_ID");
+  const templatesFolder = DriveApp.getFolderById(folderId);
+  const file = templatesFolder.getFilesByName(templateFileName);
+
+  if (!file.hasNext()) {
+    throw new Error(
+      `Die Template-Datei '${templateFileName}' wurde im Ordner 'templates' nicht gefunden.`
+    );
+  }
+
+  const templateContent = file.next().getBlob().getDataAsString();
+
+  // Platzhalter im Template ersetzen
+  const filledTemplate = replacePlaceholders(
+    templateContent,
+    placeholderValues
+  );
+
+  // Betreff und Body aufteilen
+  const [subjectLine, ...bodyLines] = filledTemplate.split("\n");
+  const subject = subjectLine.replace("Betreff: ", "").trim();
+  const body = bodyLines.join("\n").trim();
+
+  // E-Mail im Entwürfe-Ordner erstellen
+  GmailApp.createDraft("", subject, body); // "" als Empfänger für Entwurf
+  Logger.log(
+    `E-Mail mit Betreff "${subject}" wurde im Entwürfe-Ordner erstellt.`
+  );
+}
+
+/**
+ * Ersetzt Platzhalter im Text durch die entsprechenden Werte.
+ *
+ * @param {string} text - Der Text mit Platzhaltern.
+ * @param {Object} placeholderValues - Ein Objekt mit den Platzhaltern und ihren Werten.
+ * @returns {string} - Der Text mit ersetzten Platzhaltern.
+ */
+function replacePlaceholders(text, placeholderValues) {
+  return text.replace(/{{(.*?)}}/g, (match, key) => {
+    const value = placeholderValues[key.trim()];
+    if (!value) {
+      Logger.log(
+        `Warnung: Kein Wert für Platzhalter "${key.trim()}" gefunden.`
+      );
+    }
+    return value || match;
+  });
 }

@@ -1,0 +1,13 @@
+Betreff: Nachfassen: Rückmeldung zum Bewerbungsgespräch
+
+Sehr geehrte/r {{ANSPRECHPARTNER}},
+
+ich hoffe, es geht Ihnen gut. Am {{GESPRÄCHSDATUM}} hatte ich das Vergnügen, mit Ihnen ein Bewerbungsgespräch für die Position "{{STELLE}}" bei {{UNTERNEHMEN}} zu führen. Vielen Dank nochmals für die Gelegenheit und die angenehme Unterhaltung.
+
+Da seit unserem Gespräch inzwischen einige Zeit vergangen ist, wollte ich höflich nachfragen, ob es Neuigkeiten bezüglich des Bewerbungsprozesses oder einer Entscheidung gibt. Ich freue mich über ein kurzes Update und stehe selbstverständlich für Rückfragen jederzeit zur Verfügung.
+
+Vielen Dank vorab für Ihre Zeit und Mühe.
+
+Mit freundlichen Grüßen,
+{{MEIN_NAME}}
+{{MEINE_KONTAKTDATEN}}

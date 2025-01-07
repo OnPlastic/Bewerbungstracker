@@ -1,0 +1,13 @@
+Betreff: Nachfrage: Bearbeitungsstand meiner Bewerbung
+
+Sehr geehrte/r {{ANSPRECHPARTNER}},
+
+ich hoffe, diese Nachricht erreicht Sie gut. Am {{BEWERBUNGSDATUM}} habe ich meine Bewerbung für die Position "{{STELLE}}" bei Ihrem Unternehmen eingereicht. Vielen Dank nochmals für die Bestätigung des Eingangs meiner Unterlagen.
+
+Da inzwischen einige Zeit vergangen ist, wollte ich höflich nachfragen, ob es Neuigkeiten zum Bearbeitungsstand meiner Bewerbung gibt. Ich würde mich über ein kurzes Update freuen und stehe für Rückfragen selbstverständlich jederzeit zur Verfügung.
+
+Vielen Dank vorab für Ihre Zeit und Mühe.
+
+Mit freundlichen Grüßen,  
+{{MEIN_NAME}}  
+{{MEINE_KONTAKTDATEN}} 
