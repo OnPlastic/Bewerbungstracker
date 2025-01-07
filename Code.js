@@ -1,11 +1,12 @@
 //*****Script V:0.1 A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
+// Code.js
 
 /**
  * Initialisiert das Projekt, indem es sicherstellt, dass der Ordner "Bewerbungen"
  * und das zugehörige Google Sheet korrekt eingerichtet sind.
- * 
+ *
  * Diese Funktion kann verwendet werden, um die grundlegende Infrastruktur des Bewerbungstrackers
  * vor der ersten Ausführung einzurichten.
  */
@@ -19,17 +20,16 @@ function initializeProject() {
  * an die entsprechende Status-Handler-Funktion.
  */
 function mainProcess() {
-  const sheet =
-    SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Bewerbungen");
-  const data = sheet.getDataRange().getValues();
+  const sheetId = getConfigValue("SHEET_ID");
+  const spreadsheet = SpreadsheetApp.openById(sheetId);
+  const sheet = spreadsheet.getSheetByName("Bewerbungstracker");
 
+  const data = sheet.getDataRange().getValues();
   data.forEach((row, index) => {
     if (index === 0) return; // Überspringe die Kopfzeile
     processApplication(row, index, sheet);
   });
 }
-
-
 
 /**
  * Verarbeitet eine einzelne Bewerbung basierend auf ihrem Status.
@@ -217,12 +217,14 @@ function handleStatus7(row, index, sheet) {
  * @param {number} columnIndex - Die Spaltennummer, die aktualisiert werden soll.
  */
 function createTask(taskTitle, row, sheet, index, columnIndex) {
+  const taskListId = getConfigValue("TASK_LIST_ID");
   const task = {
     title: `${taskTitle} für ${row[COMPANY_COLUMN_INDEX]}`,
     notes: `Details zur Bewerbung: ${row[JOB_DESCRIPTION_COLUMN_INDEX]}`,
-    due: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(), // Frist in 7 Tagen
+    due: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
   };
-  Tasks.Tasks.insert(task, "Bewerbungen");
+
+  Tasks.Tasks.insert(task, taskListId);
 
   // Aktualisiere die Tabelle mit dem Datum der Nachfassaktion
   const today = new Date();
