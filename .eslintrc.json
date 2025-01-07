@@ -12,5 +12,11 @@
     "indent": ["error", 2],
     "quotes": ["error", "double"],
     "semi": ["error", "always"]
+  },
+  "globals": {
+    "Logger": "readonly",
+    "DriveApp": "readonly",
+    "SpreadsheetApp": "readonly",
+    "Tasks": "readonly"
   }
 }

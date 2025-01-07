@@ -3,6 +3,17 @@
 // - App für den Bewerbungsprozess -
 
 /**
+ * Initialisiert das Projekt, indem es sicherstellt, dass der Ordner "Bewerbungen"
+ * und das zugehörige Google Sheet korrekt eingerichtet sind.
+ * 
+ * Diese Funktion kann verwendet werden, um die grundlegende Infrastruktur des Bewerbungstrackers
+ * vor der ersten Ausführung einzurichten.
+ */
+function initializeProject() {
+  ensureBewerbungenSheet();
+}
+
+/**
  * Hauptfunktion, die von einem Trigger gestartet wird.
  * Sie durchläuft alle Bewerbungen in der Tabelle und delegiert die Verarbeitung
  * an die entsprechende Status-Handler-Funktion.
@@ -18,13 +29,7 @@ function mainProcess() {
   });
 }
 
-// Funktion zur Überprüfung ob der Ordner Bewerbungen existier, erstellt ihn
-function testEnsureBewerbungenFolder() {
-  const folder = ensureBewerbungenFolder();
-  Logger.log(
-    `Gefundener oder erstellter Ordner: ${folder.getName()}, ID: ${folder.getId()}`
-  );
-}
+
 
 /**
  * Verarbeitet eine einzelne Bewerbung basierend auf ihrem Status.

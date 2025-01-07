@@ -11,17 +11,6 @@ function getTaskListIDs() {
   });
 }
 
-// Erstellt einen Test-Task in der Google Tasks-Liste "Bewerbungen".
-function createTestTask() {
-  const task = {
-    title: "Testaufgabe für Bewerbungstracker",
-    notes: "Dies ist eine Testaufgabe, um die Task-Integration zu prüfen",
-    due: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(), // Frist in 7 Tagen
-  };
-  const result = Tasks.Tasks.insert(task, "Bewerbungen");
-  Logger.log(`Task erfolgreich erstellt: ${result.title}`);
-}
-
 /**
  * Überprüft, ob ein Ordner mit dem Namen "Bewerbungen" im Google Drive existiert.
  * Falls nicht, wird der Ordner erstellt.
