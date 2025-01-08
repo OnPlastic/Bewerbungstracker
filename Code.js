@@ -319,3 +319,50 @@ function createTask(taskTitle, row, sheet, index, columnIndex) {
   const today = new Date();
   sheet.getRange(index + 1, columnIndex + 1).setValue(today);
 }
+
+/**
+ * Speichert die Bewerbung und erstellt einen Ordner.
+ *
+ * @param {Object} formData - Die übermittelten Formulardaten.
+ */
+function saveApplication(formData) {
+  const folderId = getConfigValue("FOLDER_ID");
+  const mainFolder = DriveApp.getFolderById(folderId);
+
+  // Ordner für das Unternehmen erstellen
+  const companyName = formData.unternehmen;
+  let companyFolder = mainFolder.getFoldersByName(companyName);
+
+  if (companyFolder.hasNext()) {
+    companyFolder = companyFolder.next();
+  } else {
+    companyFolder = mainFolder.createFolder(companyName);
+  }
+
+  // Bewerbung in die Tabelle einfügen
+  const sheetId = getConfigValue("SHEET_ID");
+  const sheet =
+    SpreadsheetApp.openById(sheetId).getSheetByName("Bewerbungstracker");
+
+  const newRow = [
+    Utilities.getUuid(), // BewerbungsID
+    formData.unternehmen,
+    formData.stelle,
+    formData.bewerbungsart,
+    formData.jobPortal,
+    formData.datum,
+    1, // Status
+    "", // Eingang bestätigt
+    "", // Datum der Nachfrage
+    formData.kontakt,
+    formData.email,
+    formData.telefon,
+    "", // Login-Informationen
+    "", // Bewerbungsgespräch Datum
+    "", // Bewerbungsgespräch Ort
+    "", // Stellenbeschreibung Link
+    formData.kommentar,
+  ];
+
+  sheet.appendRow(newRow);
+}
