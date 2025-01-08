@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<!-- Skript Version:0.1 A:sIn -->
+<!-- Bewerbungstracker -->
+<!-- Eingabemaske für Bewerbungsinformationen -->
 <html>
   <head>
     <title>Bewerbungstracker - Neue Bewerbung</title>
@@ -27,7 +30,9 @@
         margin-top: 10px;
         font-weight: bold;
       }
-      input, select, textarea {
+      input,
+      select,
+      textarea {
         width: 93%; /* 2/3 der Seitenbreite */
         padding: 10px;
         margin-top: 5px;
@@ -54,36 +59,53 @@
     <form id="bewerbungForm">
       <label for="unternehmen">Unternehmen</label>
       <input type="text" id="unternehmen" name="unternehmen" required />
-      
+
       <label for="stelle">Stelle</label>
       <input type="text" id="stelle" name="stelle" required />
-      
+
       <label for="bewerbungsart">Art der Bewerbung</label>
       <select id="bewerbungsart" name="bewerbungsart">
         <option value="Online">Online</option>
         <option value="E-Mail">E-Mail</option>
         <option value="Post">Post</option>
       </select>
-      
+
       <label for="jobPortal">Job-Portal</label>
       <input type="text" id="jobPortal" name="jobPortal" />
-      
+
       <label for="loginInfo">Logininformationen</label>
       <textarea id="loginInfo" name="loginInfo"></textarea>
-      
+
       <label for="datum">Datum der Bewerbung</label>
       <input type="date" id="datum" name="datum" required />
-      
+
       <label for="kontakt">Ansprechpartner</label>
       <input type="text" id="kontakt" name="kontakt" />
-      
+
       <label for="email">E-Mail</label>
       <input type="email" id="email" name="email" />
-      
+
       <label for="telefon">Telefon</label>
       <input type="tel" id="telefon" name="telefon" />
-      
+
       <label for="kommentar">Kommentar</label>
       <textarea id="kommentar" name="kommentar"></textarea>
-      
-      <button type="button" onclick="subm
+
+      <button type="button" onclick="submitForm()">Speichern</button>
+    </form>
+    <script>
+      function submitForm() {
+        const formData = new FormData(document.getElementById("bewerbungForm"));
+        const data = {};
+        formData.forEach((value, key) => (data[key] = value));
+
+        google.script.run
+          .withSuccessHandler(() => alert("Bewerbung erfolgreich gespeichert!"))
+          .withFailureHandler((error) =>
+            alert("Fehler: " + JSON.stringify(error))
+          )
+          .saveApplication(data);
+      }
+    </script>
+  </body>
+</html>
