@@ -205,3 +205,22 @@ function ensureTaskList() {
   );
   return newTaskList.id;
 }
+
+/**
+ * Ersetzt Platzhalter im Text durch die entsprechenden Werte.
+ *
+ * @param {string} text - Der Text mit Platzhaltern.
+ * @param {Object} placeholderValues - Ein Objekt mit den Platzhaltern und ihren Werten.
+ * @returns {string} - Der Text mit ersetzten Platzhaltern.
+ */
+function replacePlaceholders(text, placeholderValues) {
+  return text.replace(/{{(.*?)}}/g, (match, key) => {
+    const value = placeholderValues[key.trim()];
+    if (!value) {
+      Logger.log(
+        `Warnung: Kein Wert für Platzhalter "${key.trim()}" gefunden.`
+      );
+    }
+    return value || match;
+  });
+}

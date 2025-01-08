@@ -183,7 +183,7 @@ function testCreateTask() {
   const task = {
     title: "Test-Aufgabe für Bewerbungstracker",
     notes: "Dies ist eine automatisch erstellte Test-Aufgabe.",
-    due: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    due: new Date().toISOString(), // Setze das Fälligkeitsdatum auf heute
   };
 
   try {
