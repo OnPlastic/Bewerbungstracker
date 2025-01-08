@@ -1,4 +1,3 @@
-
 # Bewerbungstracker - Installation & Anleitung
 
 ## Voraussetzungen
@@ -16,7 +15,7 @@
 - Klone das Repository über GitHub oder lade es als ZIP-Datei herunter:
 
   ```bash
-  git clone <repository-url>
+  git clone <[repository-url](https://github.com/OnPlastic/Bewerbungstracker)>
   ```
 
 - Entpacke das ZIP-Archiv, falls es heruntergeladen wurde.
