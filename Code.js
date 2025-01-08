@@ -92,6 +92,8 @@ function handleStatus1(row, index, sheet) {
     MEINE_KONTAKTDATEN: "Deine Kontaktdaten", // Dynamisch anpassen, falls in Tabelle vorhanden
   };
 
+  const recipientEmail = row[EMAIL_COLUMN_INDEX]; // Spalte für die Firmen E-Mail-Adresse
+
   if (daysSinceSubmission == 14) {
     createTask(
       "Eingangsbestätigung nachfragen",
@@ -100,7 +102,11 @@ function handleStatus1(row, index, sheet) {
       index,
       FIRST_FOLLOWUP_COLUMN_INDEX
     );
-    createEmailFromTemplate("status1_first_request.txt", placeholderValues);
+    createEmailFromTemplate(
+      "status1_first_request.txt",
+      placeholderValues,
+      recipientEmail
+    );
   } else if (daysSinceSubmission == 24) {
     createTask(
       "Erneut Eingangsbestätigung nachfragen",
@@ -109,7 +115,11 @@ function handleStatus1(row, index, sheet) {
       index,
       SECOND_FOLLOWUP_COLUMN_INDEX
     );
-    createEmailFromTemplate("status1_second_request.txt", placeholderValues);
+    createEmailFromTemplate(
+      "status1_second_request.txt",
+      placeholderValues,
+      recipientEmail
+    );
   } else if (daysSinceSubmission == 38) {
     sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
   }
@@ -144,6 +154,8 @@ function handleStatus2(row, index, sheet) {
     ),
   };
 
+  const recipientEmail = row[EMAIL_COLUMN_INDEX]; // Spalte für die Firmen E-Mail-Adresse
+
   if (daysSinceLastFollowUp === 25) {
     createTask(
       "Bearbeitungsstand nachfragen",
@@ -152,7 +164,11 @@ function handleStatus2(row, index, sheet) {
       index,
       FIRST_FOLLOWUP_COLUMN_INDEX
     );
-    createEmailFromTemplate("status2_first_request.txt", placeholderValues);
+    createEmailFromTemplate(
+      "status2_first_request.txt",
+      placeholderValues,
+      recipientEmail
+    );
   } else if (daysSinceLastFollowUp === 35) {
     createTask(
       "Erneut Bearbeitungsstand nachfragen",
@@ -161,7 +177,11 @@ function handleStatus2(row, index, sheet) {
       index,
       SECOND_FOLLOWUP_COLUMN_INDEX
     );
-    createEmailFromTemplate("status2_second_request.txt", placeholderValues);
+    createEmailFromTemplate(
+      "status2_second_request.txt",
+      placeholderValues,
+      recipientEmail
+    );
   } else if (daysSinceLastFollowUp === 49) {
     sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
   }
@@ -196,6 +216,8 @@ function handleStatus3(row, index, sheet) {
     ),
   };
 
+  const recipientEmail = row[EMAIL_COLUMN_INDEX]; // Spalte für die Firmen E-Mail-Adresse
+
   if (daysSinceLastFollowUp === 25) {
     createTask(
       "Bearbeitungsstand prüfen",
@@ -204,7 +226,11 @@ function handleStatus3(row, index, sheet) {
       index,
       FIRST_FOLLOWUP_COLUMN_INDEX
     );
-    createEmailFromTemplate("status3_request_update.txt", placeholderValues);
+    createEmailFromTemplate(
+      "status3_request_update.txt",
+      placeholderValues,
+      recipientEmail
+    );
   } else if (daysSinceLastFollowUp === 39) {
     sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
   }
@@ -251,6 +277,8 @@ function handleStatus4(row, index, sheet) {
     MEINE_KONTAKTDATEN: "Deine Kontaktdaten",
   };
 
+  const recipientEmail = row[EMAIL_COLUMN_INDEX]; // Spalte für die Firmen E-Mail-Adresse
+
   if (daysSinceInterview === 20) {
     createTask(
       "Nachfassen nach Gespräch",
@@ -261,7 +289,8 @@ function handleStatus4(row, index, sheet) {
     );
     createEmailFromTemplate(
       "status4_followup_interview.txt",
-      placeholderValues
+      placeholderValues,
+      recipientEmail
     );
   } else if (daysSinceInterview === 34) {
     sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
@@ -357,10 +386,10 @@ function saveApplication(formData) {
     formData.kontakt,
     formData.email,
     formData.telefon,
-    "", // Login-Informationen
+    formData.loginInfo,
     "", // Bewerbungsgespräch Datum
     "", // Bewerbungsgespräch Ort
-    "", // Stellenbeschreibung Link
+    formData.link,
     formData.kommentar,
   ];
 

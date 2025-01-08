@@ -237,10 +237,15 @@ function createEmailFromTemplate(templateFileName, placeholderValues) {
   const subject = subjectLine.replace("Betreff: ", "").trim();
   const body = bodyLines.join("\n").trim();
 
+  if (!recipientEmail) {
+    Logger.log("Warnung: Keine Empfängeradresse angegeben.");
+    recipientEmail = ""; // Standardmäßig leer lassen
+  }
+
   // E-Mail im Entwürfe-Ordner erstellen
-  GmailApp.createDraft("", subject, body); // "" als Empfänger für Entwurf
+  GmailApp.createDraft(recipientEmail, subject, body); // `recipientEmail` als Empfänger für Entwurf
   Logger.log(
-    `E-Mail mit Betreff "${subject}" wurde im Entwürfe-Ordner erstellt.`
+    `E-Mail mit Betreff "${subject}" wurde an "${recipientEmail} im Entwürfe-Ordner erstellt.`
   );
 }
 
