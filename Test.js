@@ -1,4 +1,4 @@
-//*****Script V:0.1 A:sIn*****
+//*****Script V:0.2 A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // - Testszenarien -
@@ -23,7 +23,8 @@ function testBewerbungenFolder() {
 }
 
 /**
- * Testet, ob das Google Sheet korrekt erstellt wurde.
+ * Testet, ob das Google Sheet korrekt erstellt wurde
+ * und überprüft, ob die notwendigen Spalten vorhanden sind.
  */
 function testBewerbungenSheet() {
   const sheetId = getConfigValue("SHEET_ID");
@@ -34,7 +35,43 @@ function testBewerbungenSheet() {
 
   const spreadsheet = SpreadsheetApp.openById(sheetId);
   if (spreadsheet) {
-    Logger.log(`Google Sheet existiert. ID: ${sheetId}`);
+    const sheet = spreadsheet.getSheets()[0];
+    const columns = sheet
+      .getRange(1, 1, 1, sheet.getLastColumn())
+      .getValues()[0];
+
+    const requiredColumns = [
+      "BewerbungsID",
+      "Unternehmen",
+      "Stelle",
+      "Art der Bewerbung",
+      "Job-Portal",
+      "Datum der Bewerbung",
+      "Status",
+      "Eingang bestätigt",
+      "Datum der Nachfrage",
+      "Ansprechpartner",
+      "Email",
+      "Telefon",
+      "Login-Informationen",
+      "Bewerbungsgespräch Datum",
+      "Bewerbungsgespräch Ort",
+      "Stellenbeschreibung Link",
+      "Kommentar",
+    ];
+
+    const missingColumns = requiredColumns.filter(
+      (col) => !columns.includes(col)
+    );
+    if (missingColumns.length > 0) {
+      Logger.log(
+        `Fehler: Fehlende Spalten im Google Sheet: ${missingColumns.join(", ")}`
+      );
+    } else {
+      Logger.log(
+        `Google Sheet existiert und enthält alle notwendigen Spalten. ID: ${sheetId}`
+      );
+    }
   } else {
     Logger.log("Fehler: Google Sheet konnte nicht gefunden werden.");
   }
@@ -78,21 +115,158 @@ function testTemplatesFolder() {
 }
 
 /**
- * Testet, ob eine Template-Datei im Templates-Ordner vorhanden ist.
+ * Testet, ob die erforderlichen Template-Dateien im Templates-Ordner vorhanden sind.
  */
-function testTemplateFile() {
+function testTemplateFiles() {
   const templatesFolderId = getConfigValue("TEMPLATES_FOLDER_ID");
   const folder = DriveApp.getFolderById(templatesFolderId);
-  const fileName = "status1_first_request.txt";
+  const requiredFiles = [
+    "status1_first_request.txt",
+    "status1_second_request.txt",
+  ];
 
-  const file = folder.getFilesByName(fileName);
-  if (file.hasNext()) {
-    Logger.log(`Template-Datei '${fileName}' existiert.`);
-  } else {
-    Logger.log(
-      `Fehler: Template-Datei '${fileName}' konnte nicht gefunden werden.`
-    );
+  requiredFiles.forEach((fileName) => {
+    const file = folder.getFilesByName(fileName);
+    if (file.hasNext()) {
+      Logger.log(`Template-Datei '${fileName}' existiert.`);
+    } else {
+      Logger.log(
+        `Fehler: Template-Datei '${fileName}' konnte nicht gefunden werden.`
+      );
+    }
+  });
+}
+
+/**
+ * Testet, ob die Config.js Datei korrekt erstellt wurde
+ * und die erwarteten Schlüssel-Wert-Paare enthält.
+ */
+function testConfigFile() {
+  const folderId = getConfigValue("FOLDER_ID");
+  const folder = DriveApp.getFolderById(folderId);
+  const configFile = folder.getFilesByName("Config.js");
+
+  if (!configFile.hasNext()) {
+    Logger.log("Fehler: Config.js Datei wurde nicht erstellt.");
+    return;
   }
+
+  const content = configFile.next().getBlob().getDataAsString();
+  const requiredKeys = [
+    "FOLDER_ID",
+    "TEMPLATES_FOLDER_ID",
+    "SHEET_ID",
+    "TASK_LIST_ID",
+    "MEIN_NAME",
+    "MEINE_KONTAKTDATEN",
+  ];
+
+  requiredKeys.forEach((key) => {
+    if (!content.includes(`const ${key} =`)) {
+      Logger.log(`Fehler: Schlüssel '${key}' fehlt in der Config.js.`);
+    } else {
+      Logger.log(`Schlüssel '${key}' ist in der Config.js vorhanden.`);
+    }
+  });
+}
+
+/**
+ * Testet das Erstellen einer Test-Aufgabe in Google Tasks.
+ */
+function testCreateTask() {
+  const taskListId = getConfigValue("TASK_LIST_ID");
+  if (!taskListId) {
+    Logger.log("Fehler: Task-Liste wurde nicht gefunden.");
+    return;
+  }
+
+  const task = {
+    title: "Test-Aufgabe für Bewerbungstracker",
+    notes: "Dies ist eine automatisch erstellte Test-Aufgabe.",
+    due: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+  };
+
+  try {
+    const createdTask = Tasks.Tasks.insert(task, taskListId);
+    Logger.log(`Test-Aufgabe erstellt. ID: ${createdTask.id}`);
+  } catch (e) {
+    Logger.log(`Fehler beim Erstellen der Test-Aufgabe: ${e.message}`);
+  }
+}
+
+/**
+ * Testet das Erstellen einer Test-E-Mail.
+ */
+function testCreateEmail() {
+  const templateFileName = "status1_first_request.txt";
+  const placeholderValues = {
+    BEWERBUNGSDATUM: "01.01.2025",
+    STELLE: "Teststelle",
+    UNTERNEHMEN: "Testunternehmen",
+    ANSPRECHPARTNER: "Herr Mustermann",
+    MEIN_NAME: "Max Mustermann",
+    MEINE_KONTAKTDATEN: "max.mustermann@example.com",
+  };
+
+  try {
+    createTestEmailFromTemplate(templateFileName, placeholderValues);
+    Logger.log(`Test-E-Mail erfolgreich im Entwürfe-Ordner erstellt.`);
+  } catch (e) {
+    Logger.log(`Fehler beim Erstellen der Test-E-Mail: ${e.message}`);
+  }
+}
+
+/**
+ * Erstellt eine Test-E-Mail basierend auf einer Template-Datei.
+ *
+ * Diese Funktion nutzt die Platzhalter aus der angegebenen Datei und ersetzt sie durch Beispielwerte.
+ * Die E-Mail wird an "test@example.com" im Entwurfsordner gesendet.
+ *
+ * @param {string} templateFileName - Der Name der Template-Datei (z. B. 'status1_first_request.txt').
+ */
+function createTestEmailFromTemplate(templateFileName) {
+  const folderId = getConfigValue("TEMPLATES_FOLDER_ID");
+  const templatesFolder = DriveApp.getFolderById(folderId);
+  const file = templatesFolder.getFilesByName(templateFileName);
+
+  if (!file.hasNext()) {
+    Logger.log(
+      `Fehler: Die Template-Datei '${templateFileName}' wurde im Ordner 'templates' nicht gefunden.`
+    );
+    return;
+  }
+
+  const templateContent = file.next().getBlob().getDataAsString();
+
+  // Beispielwerte für die Platzhalter
+  const placeholderValues = {
+    BEWERBUNGSDATUM: "01.01.2025",
+    STELLE: "Softwareentwickler",
+    UNTERNEHMEN: "Beispiel GmbH",
+    ANSPRECHPARTNER: "Herr Muster",
+    MEIN_NAME: "Max Mustermann",
+    MEINE_KONTAKTDATEN: "max.mustermann@example.com",
+  };
+
+  // Platzhalter im Template ersetzen
+  const filledTemplate = replacePlaceholders(
+    templateContent,
+    placeholderValues
+  );
+
+  // Betreff und Body aufteilen
+  const [subjectLine, ...bodyLines] = filledTemplate.split("\n");
+  const subject = subjectLine.replace("Betreff: ", "").trim();
+  const body = bodyLines.join("\n").trim();
+
+  // Festlegen einer Test-Empfängeradresse
+  const recipientEmail = "test@example.com";
+
+  // E-Mail im Entwürfe-Ordner erstellen
+  GmailApp.createDraft(recipientEmail, subject, body);
+  Logger.log(
+    `Test-E-Mail mit Betreff "${subject}" wurde an "${recipientEmail}" im Entwürfe-Ordner erstellt.`
+  );
 }
 
 /**
@@ -104,6 +278,8 @@ function runAllTests() {
   testBewerbungenSheet();
   testTaskList();
   testTemplatesFolder();
-  testTemplateFile();
+  testTemplateFiles();
+  testCreateTask();
+  testCreateEmail();
   Logger.log("Tests abgeschlossen.");
 }

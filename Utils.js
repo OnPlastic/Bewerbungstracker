@@ -1,102 +1,137 @@
-//*****Script V:0.1 A:sIn*****
+//*****Script V:0.2 A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // - Zusatzfunktionen -
 // Utils.js
 
 /**
- * Überprüft, ob die Google-Taskliste "Bewerbungen" existiert, und erstellt sie, falls nicht.
- * Speichert die ID der Liste in der Konfigurationsdatei.
+ * Ruft einen Wert aus der Config.js ab.
+ * @param {string} key - Der Name des Schlüssels, der abgerufen werden soll.
+ * @returns {string|null} - Der Wert des Schlüssels oder null, wenn er nicht gefunden wird.
  */
-function ensureTaskList() {
-  const taskLists = Tasks.Tasklists.list().items;
-  let taskListId = null;
+function getConfigValue(key) {
+  const configFile = getConfigFile(); // Holt die Config-Datei
+  const content = configFile.getBlob().getDataAsString();
+  const match = new RegExp(`const ${key} = "(.*?)";`).exec(content);
 
-  // Suche nach der Taskliste "Bewerbungen"
-  if (taskLists) {
-    taskLists.forEach((taskList) => {
-      if (taskList.title === "Bewerbungen") {
-        taskListId = taskList.id;
-      }
-    });
-  }
-
-  // Falls die Liste nicht existiert, erstelle sie
-  if (!taskListId) {
-    const newTaskList = Tasks.Tasklists.insert({ title: "Bewerbungen" });
-    taskListId = newTaskList.id;
-    Logger.log(`Taskliste "Bewerbungen" wurde erstellt. ID: ${taskListId}`);
+  if (match) {
+    return match[1];
   } else {
-    Logger.log(`Taskliste "Bewerbungen" existiert bereits. ID: ${taskListId}`);
+    Logger.log(`Schlüssel "${key}" in der Config-Datei nicht gefunden.`);
+    return null;
   }
-
-  // Speichere die ID in der Konfigurationsdatei
-  setConfigValue("TASK_LIST_ID", taskListId);
 }
 
 /**
- * Überprüft, ob ein Ordner mit dem Namen "Bewerbungen" im Google Drive existiert,
- * und erstellt ihn, falls nicht. Speichert die ID des Ordners in der Konfigurationsdatei.
- *
- * @returns {GoogleAppsScript.Drive.Folder} Der existierende oder neu erstellte Ordner.
+ * Überprüft, ob der Hauptordner existiert, und erstellt ihn, falls nicht.
+ * @returns {GoogleAppsScript.Drive.Folder} - Der existierende oder neu erstellte Ordner.
  */
 function ensureBewerbungenFolder() {
   const folderName = "Bewerbungen";
   const folders = DriveApp.getFoldersByName(folderName);
-  let folder;
 
   if (folders.hasNext()) {
-    folder = folders.next();
+    const folder = folders.next();
+    Logger.log(
+      `Ordner "${folderName}" existiert bereits. ID: ${folder.getId()}`
+    );
+    return folder;
   } else {
-    folder = DriveApp.createFolder(folderName);
+    const folder = DriveApp.createFolder(folderName);
     Logger.log(`Ordner "${folderName}" wurde erstellt. ID: ${folder.getId()}`);
+    return folder;
   }
-
-  // Speichere die ID in der Konfigurationsdatei
-  setConfigValue("FOLDER_ID", folder.getId());
-
-  return folder;
 }
 
 /**
- * Überprüft, ob der Ordner "templates" im Bewerbungen-Hauptordner existiert.
- * Falls nicht, wird der Ordner erstellt und die ID in der Config.js gespeichert.
- *
- * @returns {GoogleAppsScript.Drive.Folder} - Der existierende oder neu erstellte Templates-Ordner.
+ * Speichert einen Schlüssel-Wert-Paar in der Config.js.
+ * @param {string} key - Der Name des Schlüssels.
+ * @param {string} value - Der zu speichernde Wert.
  */
-function ensureTemplatesFolder() {
-  const mainFolderId = getConfigValue("FOLDER_ID");
-  const mainFolder = DriveApp.getFolderById(mainFolderId);
-  const templatesFolderName = "templates";
+function saveToConfig(key, value) {
+  const configFile = getConfigFile();
+  let content = configFile.getBlob().getDataAsString();
 
-  let templatesFolder = mainFolder.getFoldersByName(templatesFolderName);
-
-  if (templatesFolder.hasNext()) {
-    templatesFolder = templatesFolder.next();
-    Logger.log(
-      `Der Ordner "${templatesFolderName}" existiert bereits. ID: ${templatesFolder.getId()}`
-    );
+  const regex = new RegExp(`const ${key} = "(.*?)";`);
+  if (content.match(regex)) {
+    content = content.replace(regex, `const ${key} = "${value}";`);
+    Logger.log(`Schlüssel "${key}" wurde in der Config aktualisiert.`);
   } else {
-    templatesFolder = mainFolder.createFolder(templatesFolderName);
-    Logger.log(
-      `Der Ordner "${templatesFolderName}" wurde neu erstellt. ID: ${templatesFolder.getId()}`
-    );
+    content += `const ${key} = "${value}";\n`;
+    Logger.log(`Schlüssel "${key}" wurde in der Config hinzugefügt.`);
   }
 
-  // Speichere die ID in der Config.js
-  setConfigValue("TEMPLATES_FOLDER_ID", templatesFolder.getId());
+  configFile.setContent(content);
+}
 
-  return templatesFolder;
+/**
+ * Holt die Config-Datei oder erstellt sie, falls sie fehlt.
+ * @returns {GoogleAppsScript.Drive.File} - Die Config-Datei.
+ */
+function getConfigFile() {
+  const folder = DriveApp.getFolderById(getMainFolderId());
+  const fileName = "Config.js";
+  const files = folder.getFilesByName(fileName);
+
+  if (files.hasNext()) {
+    return files.next();
+  } else {
+    Logger.log(`Config-Datei "${fileName}" wird erstellt.`);
+    return folder.createFile(fileName, "// Bewerbungstracker Konfiguration\n");
+  }
+}
+
+/**
+ * Überprüft, ob der Hauptordner existiert, und gibt die ID zurück.
+ * @returns {string} - Die ID des Hauptordners.
+ */
+function getMainFolderId() {
+  const folderName = "Bewerbungen";
+  const folders = DriveApp.getFoldersByName(folderName);
+
+  if (folders.hasNext()) {
+    return folders.next().getId();
+  } else {
+    const folder = DriveApp.createFolder(folderName);
+    Logger.log(
+      `Hauptordner "${folderName}" wurde erstellt. ID: ${folder.getId()}`
+    );
+    return folder.getId();
+  }
+}
+
+/**
+ * Überprüft, ob der Templates-Ordner existiert, und erstellt ihn, falls nicht.
+ * @param {GoogleAppsScript.Drive.Folder} mainFolder - Der Hauptordner.
+ * @returns {GoogleAppsScript.Drive.Folder} - Der Templates-Ordner.
+ */
+function ensureTemplatesFolder(mainFolder) {
+  const folderName = "templates";
+  const folders = mainFolder.getFoldersByName(folderName);
+
+  if (folders.hasNext()) {
+    const folder = folders.next();
+    Logger.log(
+      `Templates-Ordner "${folderName}" existiert bereits. ID: ${folder.getId()}`
+    );
+    return folder;
+  } else {
+    const folder = mainFolder.createFolder(folderName);
+    Logger.log(
+      `Templates-Ordner "${folderName}" wurde erstellt. ID: ${folder.getId()}`
+    );
+    return folder;
+  }
 }
 
 /**
  * Überprüft, ob das Google Sheet "Bewerbungstracker" im Ordner "Bewerbungen" existiert.
- * Falls nicht, wird es erstellt. Überprüft auch die Struktur des Sheets
- * und passt sie bei Bedarf an. Speichert die Sheet-ID in der Konfigurationsdatei.
+ * Falls nicht, wird es erstellt. Setzt die erforderlichen Spalten bei Bedarf.
+ *
+ * @param {GoogleAppsScript.Drive.Folder} folder Der Ordner, in dem das Sheet erstellt werden soll.
+ * @returns {GoogleAppsScript.Spreadsheet.Spreadsheet} Das erstellte oder gefundene Spreadsheet.
  */
-function ensureBewerbungenSheet() {
-  const folderID = getConfigValue("FOLDER_ID");
-  const folder = DriveApp.getFolderById(folderID);
+function ensureBewerbungenSheet(folder) {
   const sheetName = "Bewerbungstracker";
   const requiredColumns = [
     "BewerbungsID",
@@ -118,7 +153,7 @@ function ensureBewerbungenSheet() {
     "Kommentar",
   ];
 
-  // Suche nach dem Sheet im Ordner
+  // Suche nach einem existierenden Sheet
   const files = folder.getFilesByName(sheetName);
   let spreadsheet;
 
@@ -131,136 +166,42 @@ function ensureBewerbungenSheet() {
     spreadsheet = SpreadsheetApp.create(sheetName);
     const file = DriveApp.getFileById(spreadsheet.getId());
     folder.addFile(file);
-    DriveApp.getRootFolder().removeFile(file); // Aus dem Standard-Drive entfernen
-    Logger.log(`Das Sheet "${sheetName}" wurde neu erstellt.`);
+    DriveApp.getRootFolder().removeFile(file); // Entferne aus dem Root-Ordner
+    Logger.log(`Das Sheet "${sheetName}" wurde erstellt.`);
+
+    // Initialisiere die Spalten
+    const sheet = spreadsheet.getSheets()[0];
+    sheet
+      .getRange(1, 1, 1, requiredColumns.length)
+      .setValues([requiredColumns]);
+    Logger.log(`Spalten wurden in das neue Sheet "${sheetName}" eingefügt.`);
   }
 
-  const sheet = spreadsheet.getSheets()[0];
+  return spreadsheet;
+}
 
-  // Überprüfen und Hinzufügen der Spalten
-  const existingColumns = sheet
-    .getRange(1, 1, 1, sheet.getLastColumn())
-    .getValues()[0];
-  requiredColumns.forEach((column, index) => {
-    if (!existingColumns.includes(column)) {
-      if (index >= existingColumns.length) {
-        sheet.getRange(1, index + 1).setValue(column);
-      } else {
-        sheet.insertColumnAfter(index + 1);
-        sheet.getRange(1, index + 1).setValue(column);
+/**
+ * Überprüft, ob die Google-Taskliste "Bewerbungen" existiert, und erstellt sie, falls nicht.
+ * @returns {string} - Die ID der Taskliste.
+ */
+function ensureTaskList() {
+  const taskListName = "Bewerbungen";
+  const taskLists = Tasks.Tasklists.list().items;
+
+  if (taskLists) {
+    for (const taskList of taskLists) {
+      if (taskList.title === taskListName) {
+        Logger.log(
+          `Tasks-Liste "${taskListName}" existiert bereits. ID: ${taskList.id}`
+        );
+        return taskList.id;
       }
     }
-  });
-
-  // Speichere die ID in der Konfigurationsdatei
-  setConfigValue("SHEET_ID", spreadsheet.getId());
-}
-
-/**
- * Speichert eine Schlüssel-Wert-Konfiguration in der Datei Config.js im Ordner "Bewerbungen".
- *
- * @param {string} key - Der Name des Konfigurationsschlüssels.
- * @param {string} value - Der zu speichernde Wert.
- */
-function setConfigValue(key, value) {
-  const folder = ensureBewerbungenFolder();
-  const fileName = "Config.js";
-  let file = folder.getFilesByName(fileName);
-
-  if (!file.hasNext()) {
-    // Erstelle die Config.js, falls sie nicht existiert
-    file = folder.createFile(fileName, `// Bewerbungstracker Konfiguration\n`);
-    Logger.log(`Config-Datei "${fileName}" wurde erstellt.`);
-  } else {
-    file = file.next();
   }
 
-  const existingContent = file.getBlob().getDataAsString();
-  const newContent = existingContent.includes(`const ${key} =`)
-    ? existingContent.replace(
-        new RegExp(`const ${key} = ".*?";`),
-        `const ${key} = "${value}";`
-      )
-    : existingContent + `const ${key} = "${value}";\n`;
-
-  file.setContent(newContent);
-}
-
-/**
- * Liest einen Konfigurationswert aus der Datei Config.js im Ordner "Bewerbungen".
- */
-function getConfigValue(key) {
-  const folder = ensureBewerbungenFolder();
-  const fileName = "Config.js";
-  const file = folder.getFilesByName(fileName);
-
-  if (!file.hasNext()) {
-    Logger.log(`Config-Datei "${fileName}" wurde nicht gefunden.`);
-    return null;
-  }
-
-  const content = file.next().getBlob().getDataAsString();
-  const match = new RegExp(`const ${key} = "(.*?)";`).exec(content);
-  return match ? match[1] : null;
-}
-
-/**
- * Erstellt eine E-Mail basierend auf einer Template-Datei.
- *
- * @param {string} templateFileName - Der Name der Template-Datei (z. B. 'status1_first_request.txt').
- * @param {Object} placeholderValues - Ein Objekt mit den Platzhaltern und ihren Werten.
- */
-function createEmailFromTemplate(templateFileName, placeholderValues) {
-  const folderId = getConfigValue("TEMPLATES_FOLDER_ID");
-  const templatesFolder = DriveApp.getFolderById(folderId);
-  const file = templatesFolder.getFilesByName(templateFileName);
-
-  if (!file.hasNext()) {
-    throw new Error(
-      `Die Template-Datei '${templateFileName}' wurde im Ordner 'templates' nicht gefunden.`
-    );
-  }
-
-  const templateContent = file.next().getBlob().getDataAsString();
-
-  // Platzhalter im Template ersetzen
-  const filledTemplate = replacePlaceholders(
-    templateContent,
-    placeholderValues
-  );
-
-  // Betreff und Body aufteilen
-  const [subjectLine, ...bodyLines] = filledTemplate.split("\n");
-  const subject = subjectLine.replace("Betreff: ", "").trim();
-  const body = bodyLines.join("\n").trim();
-
-  if (!recipientEmail) {
-    Logger.log("Warnung: Keine Empfängeradresse angegeben.");
-    recipientEmail = ""; // Standardmäßig leer lassen
-  }
-
-  // E-Mail im Entwürfe-Ordner erstellen
-  GmailApp.createDraft(recipientEmail, subject, body); // `recipientEmail` als Empfänger für Entwurf
+  const newTaskList = Tasks.Tasklists.insert({ title: taskListName });
   Logger.log(
-    `E-Mail mit Betreff "${subject}" wurde an "${recipientEmail} im Entwürfe-Ordner erstellt.`
+    `Tasks-Liste "${taskListName}" wurde erstellt. ID: ${newTaskList.id}`
   );
-}
-
-/**
- * Ersetzt Platzhalter im Text durch die entsprechenden Werte.
- *
- * @param {string} text - Der Text mit Platzhaltern.
- * @param {Object} placeholderValues - Ein Objekt mit den Platzhaltern und ihren Werten.
- * @returns {string} - Der Text mit ersetzten Platzhaltern.
- */
-function replacePlaceholders(text, placeholderValues) {
-  return text.replace(/{{(.*?)}}/g, (match, key) => {
-    const value = placeholderValues[key.trim()];
-    if (!value) {
-      Logger.log(
-        `Warnung: Kein Wert für Platzhalter "${key.trim()}" gefunden.`
-      );
-    }
-    return value || match;
-  });
+  return newTaskList.id;
 }

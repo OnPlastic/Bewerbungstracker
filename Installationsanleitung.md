@@ -63,15 +63,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 
 ---
 
-### 4. Templates in Google Drive einrichten
-
-1. Öffne Google Drive und erstelle einen Ordner namens **"Bewerbungen"**.
-2. Lege darin einen Unterordner namens **"templates"** an.
-3. Lade die Dateien aus dem Ordner **templates/** des Repositories in diesen Unterordner hoch.
-
----
-
-### 5. Projekt initialisieren
+### 4. Projekt initialisieren
 
 1. Rufe im Google Apps Script-Editor die Funktion **`initializeProject`** auf:
    - Wähle im Dropdown-Menü neben dem Play-Button (▶) **`initializeProject`** aus.
@@ -81,6 +73,14 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
    - Google Sheet **"Bewerbungstracker"** mit den erforderlichen Spalten.
    - Google Tasks-Liste **"Bewerbungen"**.
    - Ordner **"templates"** (falls noch nicht vorhanden).
+
+---
+
+### 5. Templates in Google Drive einrichten
+
+1. Öffne Google Drive und erstelle einen Ordner namens **"Bewerbungen"**.
+2. Lege darin einen Unterordner namens **"templates"** an.
+3. Lade die Dateien aus dem Ordner **templates/** des Repositories in diesen Unterordner hoch.
 
 ---
 
