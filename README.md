@@ -31,9 +31,9 @@ Ein Tool, das den Bewerbungsprozess automatisiert und strukturiert. Es überwach
 
 ## Einrichtung
 
-1. **Ordner erstellen und Projekt initialisieren:**
+1. **Projekt initialisieren**
 
-   - Stelle sicher, dass Google Drive einen Ordner `Bewerbungen` enthält.
+   - Folge den Schritten in der Installationsanleitung.md.
    - Führe die Funktion `initializeProject()` aus, um das Google Sheet und die grundlegende Struktur einzurichten.
 
 2. **Trigger aktivieren:**
