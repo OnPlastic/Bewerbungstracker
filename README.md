@@ -33,7 +33,7 @@ Ein Tool, das den Bewerbungsprozess automatisiert und strukturiert. Es überwach
 
 1. **Projekt initialisieren**
 
-   - Folge den Schritten in der Installationsanleitung.md.
+   - Folge den Schritten in der `Installationsanleitung.md`.
    - Führe die Funktion `initializeProject()` aus, um das Google Sheet und die grundlegende Struktur einzurichten.
 
 2. **Trigger aktivieren:**
