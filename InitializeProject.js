@@ -6,9 +6,9 @@
 
 function initializeProject() {
   const folder = ensureBewerbungenFolder();
-  const sheet = ensureBewerbungenSheet();
-  const taskList = ensureTaskList();
-  const templatesFolder = ensureTemplatesFolder();
+  ensureBewerbungenSheet();
+  ensureTaskList();
+  ensureTemplatesFolder();
 
   Logger.log(
     "Projekt erfolgreich initialisiert. IDs in Config.js gespeichert."

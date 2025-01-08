@@ -47,9 +47,6 @@ function ensureBewerbungenFolder() {
 
   if (folders.hasNext()) {
     folder = folders.next();
-    Logger.log(
-      `Ordner "${folderName}" existiert bereits. ID: ${folder.getId()}`
-    );
   } else {
     folder = DriveApp.createFolder(folderName);
     Logger.log(`Ordner "${folderName}" wurde erstellt. ID: ${folder.getId()}`);
