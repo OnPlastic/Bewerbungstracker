@@ -79,4 +79,4 @@ Dieses Projekt steht unter der **MIT-Lizenz**. Siehe die Datei **License** für 
 
 ## Verbesserungsvorschläge
 
-- Feedback und Vorschläge sind willkommen! Bitte öffne ein Issue oder erstelle einen Pull Request.
+- Feedback und Vorschläge sind willkommen! Bitte öffne ein Issue oder erstelle einen Pull Request. Danke
