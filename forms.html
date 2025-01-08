@@ -13,7 +13,7 @@
       }
       h1 {
         text-align: left;
-        width: 93%; /* Gleiche Breite wie die Eingabefelder */
+        width: 93%;
         margin: 20px auto;
         font-size: 24px;
         max-width: 700px;
@@ -33,7 +33,7 @@
       input,
       select,
       textarea {
-        width: 93%; /* 2/3 der Seitenbreite */
+        width: 93%;
         padding: 10px;
         margin-top: 5px;
         border: 1px solid #ccc;
@@ -52,16 +52,20 @@
       button:hover {
         background-color: #0056b3;
       }
+      .error {
+        color: red;
+        font-size: 14px;
+      }
     </style>
   </head>
   <body>
     <h1>Neue Bewerbung hinzufügen</h1>
     <form id="bewerbungForm">
-      <label for="unternehmen">Unternehmen</label>
+      <label for="unternehmen">Unternehmen <span class="error" id="errorUnternehmen"></span></label>
       <input type="text" id="unternehmen" name="unternehmen" required />
 
       <label for="stelle">Stelle</label>
-      <input type="text" id="stelle" name="stelle" required />
+      <input type="text" id="stelle" name="stelle" />
 
       <label for="bewerbungsart">Art der Bewerbung</label>
       <select id="bewerbungsart" name="bewerbungsart">
@@ -77,7 +81,7 @@
       <textarea id="loginInfo" name="loginInfo"></textarea>
 
       <label for="datum">Datum der Bewerbung</label>
-      <input type="date" id="datum" name="datum" required />
+      <input type="date" id="datum" name="datum" />
 
       <label for="kontakt">Ansprechpartner</label>
       <input type="text" id="kontakt" name="kontakt" />
@@ -98,16 +102,49 @@
     </form>
     <script>
       function submitForm() {
+        const errorElement = document.getElementById("errorUnternehmen");
+        const unternehmen = document.getElementById("unternehmen").value.trim();
+        const datumField = document.getElementById("datum");
+
+        // Validierung für das Feld "Unternehmen"
+        if (!unternehmen) {
+          errorElement.textContent = "Dieses Feld darf nicht leer sein.";
+          return; // Keine Speicherung durchführen
+        } else {
+          errorElement.textContent = ""; // Fehlermeldung entfernen, falls vorhanden
+        }
+
         const formData = new FormData(document.getElementById("bewerbungForm"));
         const data = {};
-        formData.forEach((value, key) => (data[key] = value));
 
+        // Daten sammeln und Standardwerte setzen
+        formData.forEach((value, key) => {
+          if (key === "datum" && !value) {
+            // Setze das aktuelle Datum, wenn kein Datum eingegeben wurde
+            const today = new Date().toISOString().split("T")[0];
+            data[key] = today;
+            datumField.value = today; // Zeige das aktuelle Datum im Formular
+          } else {
+            data[key] = value.trim();
+          }
+        });
+
+        // Aufruf der Apps-Skript-Funktion
         google.script.run
-          .withSuccessHandler(() => alert("Bewerbung erfolgreich gespeichert!"))
+          .withSuccessHandler(() => {
+            alert("Bewerbung erfolgreich gespeichert!");
+            clearForm(); // Formularfelder leeren
+          })
           .withFailureHandler((error) =>
             alert("Fehler: " + JSON.stringify(error))
           )
           .saveApplication(data);
+      }
+
+      // Funktion zum Leeren der Formularfelder
+      function clearForm() {
+        document.getElementById("bewerbungForm").reset(); // Setzt das Formular zurück
+        document.getElementById("errorUnternehmen").textContent = ""; // Entfernt mögliche Fehlermeldungen
       }
     </script>
   </body>

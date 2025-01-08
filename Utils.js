@@ -30,17 +30,18 @@ function ensureBewerbungenFolder() {
   const folderName = "Bewerbungen";
   const folders = DriveApp.getFoldersByName(folderName);
 
-  if (folders.hasNext()) {
+  // Lösche vorhandene Ordner
+  while (folders.hasNext()) {
     const folder = folders.next();
-    Logger.log(
-      `Ordner "${folderName}" existiert bereits. ID: ${folder.getId()}`
-    );
-    return folder;
-  } else {
-    const folder = DriveApp.createFolder(folderName);
-    Logger.log(`Ordner "${folderName}" wurde erstellt. ID: ${folder.getId()}`);
-    return folder;
+    folder.setTrashed(true); // Verschiebe den Ordner in den Papierkorb
   }
+
+  // Erstelle den Ordner neu
+  const folder = DriveApp.createFolder(folderName);
+  Logger.log(
+    `Ordner "${folderName}" wurde neu erstellt. ID: ${folder.getId()}`
+  );
+  return folder;
 }
 
 /**
@@ -109,19 +110,18 @@ function ensureTemplatesFolder(mainFolder) {
   const folderName = "templates";
   const folders = mainFolder.getFoldersByName(folderName);
 
-  if (folders.hasNext()) {
+  // Lösche vorhandene Templates-Ordner
+  while (folders.hasNext()) {
     const folder = folders.next();
-    Logger.log(
-      `Templates-Ordner "${folderName}" existiert bereits. ID: ${folder.getId()}`
-    );
-    return folder;
-  } else {
-    const folder = mainFolder.createFolder(folderName);
-    Logger.log(
-      `Templates-Ordner "${folderName}" wurde erstellt. ID: ${folder.getId()}`
-    );
-    return folder;
+    folder.setTrashed(true); // Verschiebe den Ordner in den Papierkorb
   }
+
+  // Erstelle den Templates-Ordner neu
+  const folder = mainFolder.createFolder(folderName);
+  Logger.log(
+    `Templates-Ordner "${folderName}" wurde neu erstellt. ID: ${folder.getId()}`
+  );
+  return folder;
 }
 
 /**
@@ -171,6 +171,7 @@ function ensureBewerbungenSheet(folder) {
 
     // Initialisiere die Spalten
     const sheet = spreadsheet.getSheets()[0];
+    sheet.setName(sheetName); // Tabellenblatt umbenennen
     sheet
       .getRange(1, 1, 1, requiredColumns.length)
       .setValues([requiredColumns]);

@@ -321,3 +321,97 @@ function handleStatus6(row, index, sheet) {
 function handleStatus7(row, index, sheet) {
   // Bewerbung ist endgültig abgelehnt, keine weiteren Schritte erforderlich.
 }
+
+/**
+ * Erstellt eine neue Aufgabe in Google Tasks und aktualisiert das Datum der Aktion in der Tabelle.
+ *
+ * @param {string} taskTitle - Der Titel der zu erstellenden Aufgabe.
+ * @param {Array} row - Die Zeile der Tabelle, die die Bewerbung darstellt.
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - Das Google Sheet-Objekt.
+ * @param {number} index - Der Index der Zeile in der Tabelle.
+ * @param {number} columnIndex - Die Spaltennummer, die aktualisiert werden soll.
+ */
+function createTask(taskTitle, row, sheet, index, columnIndex) {
+  const taskListId = getConfigValue("TASK_LIST_ID");
+  const task = {
+    title: `${taskTitle} für ${row[COMPANY_COLUMN_INDEX]}`,
+    notes: `Details zur Bewerbung: ${row[JOB_DESCRIPTION_COLUMN_INDEX]}`,
+    due: new Date().toISOString(), // Fälligkeitsdatum ist heute
+  };
+
+  Tasks.Tasks.insert(task, taskListId);
+
+  // Aktualisiere die Tabelle mit dem aktuellen Datum
+  const today = Utilities.formatDate(
+    new Date(),
+    Session.getScriptTimeZone(),
+    "dd.MM.yyyy"
+  );
+  sheet.getRange(index + 1, columnIndex + 1).setValue(today);
+}
+
+/**
+ * Speichert die Bewerbung und erstellt einen Ordner.
+ *
+ * @param {Object} formData - Die übermittelten Formulardaten.
+ */
+function saveApplication(formData) {
+  const folderId = getConfigValue("FOLDER_ID");
+  const mainFolder = DriveApp.getFolderById(folderId);
+
+  // Ordner für das Unternehmen erstellen oder abrufen
+  const companyName = formData.unternehmen.trim();
+  let companyFolder = mainFolder.getFoldersByName(companyName);
+
+  if (companyFolder.hasNext()) {
+    companyFolder = companyFolder.next();
+  } else {
+    companyFolder = mainFolder.createFolder(companyName);
+  }
+
+  // Bewerbung in die Tabelle einfügen
+  const sheetId = getConfigValue("SHEET_ID");
+  const sheet =
+    SpreadsheetApp.openById(sheetId).getSheetByName("Bewerbungstracker");
+
+  const newRow = [
+    Utilities.getUuid(), // BewerbungsID
+    formData.unternehmen.trim(),
+    formData.stelle.trim(),
+    formData.bewerbungsart,
+    formData.jobPortal || "", // Optionales Feld
+    formData.datum,
+    1, // Status: Standardmäßig "1" (Beworben)
+    "", // Eingang bestätigt
+    "", // Datum der Nachfrage
+    formData.kontakt || "",
+    formData.email || "",
+    formData.telefon || "",
+    formData.loginInfo || "",
+    "", // Bewerbungsgespräch Datum
+    "", // Bewerbungsgespräch Ort
+    formData.link || "",
+    formData.kommentar || "",
+  ];
+
+  sheet.appendRow(newRow);
+}
+
+// Dummy_Data für die saveApplication
+function testSaveApplication() {
+  const dummyData = {
+    unternehmen: "Testunternehmen",
+    stelle: "Softwareentwickler",
+    bewerbungsart: "Online",
+    jobPortal: "LinkedIn",
+    datum: "2025-01-01",
+    kontakt: "Herr Mustermann",
+    email: "test@example.com",
+    telefon: "123456789",
+    loginInfo: "Benutzername: test, Passwort: geheim",
+    link: "https://example.com",
+    kommentar: "Dies ist ein Testkommentar.",
+  };
+
+  saveApplication(dummyData);
+}
