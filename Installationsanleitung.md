@@ -14,9 +14,11 @@
 ### 1. Repository herunterladen
 
 - Klone das Repository über GitHub oder lade es als ZIP-Datei herunter:
+
   ```bash
   git clone <repository-url>
   ```
+
 - Entpacke das ZIP-Archiv, falls es heruntergeladen wurde.
 
 ---
@@ -148,4 +150,4 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 
 ## Support
 
-Falls es Probleme gibt, kontaktiere den Administrator oder öffne ein GitHub-Issue im Repository.
+Falls es Probleme gibt, kontaktiere mich oder öffne ein GitHub-Issue im Repository.
