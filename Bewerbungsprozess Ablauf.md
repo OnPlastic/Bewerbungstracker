@@ -2,6 +2,16 @@
 
 ---
 
+- `status1: Beworben`
+- `status2: Eingang bestätigt`
+- `status3: Bearbeitung`
+- `status4: Einladung Bew.gespräch`
+- `status5: Bew. erfolgreich`
+- `status6: Keine Reaktion`
+- `status7: Bew. nicht erfolgreich`
+
+---
+
 ## **Status 1: Beworben**
 
 - **Beschreibung:** Die Bewerbung wurde eingereicht, aber es gibt noch keine Eingangsbestätigung.

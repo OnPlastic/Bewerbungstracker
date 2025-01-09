@@ -38,6 +38,8 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
   - `status2_second_request.txt`
   - `status3_request_update.txt`
   - `status4_followup_interview.txt`
+- **Bewerbungsprozess Ablauf.md** (Zeitabläufe)
+- **Installationsanleitung.md** (Projekteinrichtung)
 
 ---
 
@@ -65,22 +67,43 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 
 ### 4. Projekt initialisieren
 
-1. Rufe im Google Apps Script-Editor die Funktion **`initializeProject`** auf:
-   - Wähle im Dropdown-Menü neben dem Play-Button (▶) **`initializeProject`** aus.
+1. Rufe im Google Apps Script-Editor die Funktion **`initializeProject()`** auf:
+   - Wähle im Dropdown-Menü neben dem Play-Button (▶) **`initializeProject()`** aus.
    - Führe die Funktion aus.
 2. Überprüfe, ob folgende Elemente erstellt wurden:
    - Google Drive-Ordner **"Bewerbungen"**.
    - Google Sheet **"Bewerbungstracker"** mit den erforderlichen Spalten.
+   - Spalten in **"Bewerbungstracker"** (TabellenblattBezeichnung: Bewerbungstracker).
+     - `BewerbungsID`
+     - `Unternehmen`
+     - `Stelle`
+     - `Art der Bewerbung`
+     - `Job-Portal`
+     - `Datum der Bewerbung`
+     - `Status`
+     - `Datum Rückmeldung`
+     - `Datum der Nachfrage`
+     - `Ansprechpartner`
+     - `Email`
+     - `Telefon`
+     - `Login-Informationen`
+     - `Bewerbungsgespräch Datum`
+     - `Bewerbungsgespräch Ort`
+     - `Stellenbeschreibung Link`
+     - `Kommentar`
    - Google Tasks-Liste **"Bewerbungen"**.
-   - Ordner **"templates"** (falls noch nicht vorhanden).
+3. Füge im Google Apps Script-Editor unter **Dienste** folgende hinzu:
+   - `Drive`
+   - `Gmail`
+   - `Sheets`
+   - `Tasks`
 
 ---
 
 ### 5. Templates in Google Drive einrichten
 
-1. Öffne Google Drive und erstelle einen Ordner namens **"Bewerbungen"**.
-2. Lege darin einen Unterordner namens **"templates"** an.
-3. Lade die Dateien aus dem Ordner **templates/** des Repositories in diesen Unterordner hoch.
+1. Öffne Google Drive und navigiere zum Ordner namens **./Bewerbungen/templates**.
+2. Lade die Dateien aus dem Ordner **templates/** des Repositories in diesen Unterordner hoch.
 
 ---
 
@@ -98,8 +121,9 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 ### 1. Eingabemaske verwenden
 
 1. **Website bereitstellen**:
-   - Gehe zu "Veröffentlichen" > "Web-App bereitstellen".
-   - Wähle bei "Wer hat Zugriff" die Option **"Jeder mit dem Link"**.
+   - Gehe im Apps Script-Editor zu "Veröffentlichen" > "Web-App bereitstellen".
+   - Wähle bei "Wer hat Zugriff" die Option **"Nur ich slebst"**.  
+     (Hinweis: _Wenn du nur dich selbst autorisierst musst du im Browser mit deinem Google-Konto angemeldet sein._)
    - Notiere dir die bereitgestellte URL.
 2. **Daten eingeben**:
    - Rufe die Website auf und trage die Bewerbungsdaten in die Eingabemaske ein.
@@ -112,7 +136,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 
 1. **Trigger einrichten**:
    - Gehe zu "Bearbeiten" > "Trigger" im Apps Script-Projekt.
-   - Lege einen Trigger für **`mainProcess`** fest, z. B. **täglich**.
+   - Lege einen Trigger für **`mainProcess()`** fest, z. B. **täglich**.
 2. Das Script erstellt basierend auf dem Bewerbungsstatus automatisch Aufgaben und E-Mails.
 
 ---
@@ -120,9 +144,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 ### 3. Tests durchführen
 
 1. Führe Test-Funktionen im Apps Script-Editor aus:
-   - **`testEnsureTaskList`**: Überprüft, ob die Google Tasks-Liste erstellt wurde.
-   - **`testEnsureBewerbungenSheet`**: Überprüft, ob das Google Sheet korrekt angelegt wurde.
-   - **`testCreateEmailDraft`**: Testet die E-Mail-Erstellung.
+   - **`runAllTests()`**: Überprüft, ob alles erfolgreich initialisiert wurde.
 2. Überprüfe die Konsolenausgabe (Logger), um sicherzustellen, dass alles wie erwartet funktioniert.
 
 ---
