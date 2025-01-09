@@ -48,7 +48,7 @@ function testBewerbungenSheet() {
       "Job-Portal",
       "Datum der Bewerbung",
       "Status",
-      "Eingang bestätigt",
+      "Datum Rückmeldung",
       "Datum der Nachfrage",
       "Ansprechpartner",
       "Email",

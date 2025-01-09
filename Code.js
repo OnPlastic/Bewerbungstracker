@@ -3,6 +3,25 @@
 // - App für den Bewerbungsprozess -
 // Code.js
 
+// Globale Konstanten
+const APPLICATION_ID_COLUMN_INDEX = 0; // BewerbungsID
+const COMPANY_COLUMN_INDEX = 1; // Unternehmen
+const JOB_DESCRIPTION_COLUMN_INDEX = 2; // Stelle
+const APPLICATION_TYPE_COLUMN_INDEX = 3; // Bewerbungsart
+const JOB_PORTAL_COLUMN_INDEX = 4; // Jobportal
+const DATE_SUBMITTED_COLUMN_INDEX = 5; // Datum der Bewerbung
+const STATUS_COLUMN_INDEX = 6; // Status
+const DATE_RESPONSE_COLUMN_INDEX = 7; // Datum Rückmeldung
+const FIRST_FOLLOWUP_COLUMN_INDEX = 8; // Datum der Nachfrage
+const CONTACT_PERSON_COLUMN_INDEX = 9; // Kontakt
+const EMAIL_COLUMN_INDEX = 10; // E-Mail
+const PHONE_COLUMN_INDEX = 11; // Telefon
+const LOGIN_INFO_COLUMN_INDEX = 12; // Login-Info
+const INTERVIEW_DATE_COLUMN_INDEX = 13; // Bewerbungsgespräch Datum
+const INTERVIEW_LOCATION_COLUMN_INDEX = 14; // Bewerbungsgespräch Ort
+const LINK_COLUMN_INDEX = 15; // Link
+const COMMENTS_COLUMN_INDEX = 16; // Kommentar
+
 /**
  * Hauptfunktion, die von einem Trigger gestartet wird.
  * Sie durchläuft alle Bewerbungen in der Tabelle und delegiert die Verarbeitung
@@ -67,9 +86,13 @@ function processApplication(row, index, sheet) {
 function handleStatus1(row, index, sheet) {
   const dateSubmitted = new Date(row[DATE_SUBMITTED_COLUMN_INDEX]);
   const today = new Date();
-  const daysSinceSubmission = Math.floor(
-    (today - dateSubmitted) / (1000 * 60 * 60 * 24)
-  );
+  const dateResponse = row[DATE_RESPONSE_COLUMN_INDEX]
+    ? new Date(row[DATE_RESPONSE_COLUMN_INDEX])
+    : null;
+
+  const daysSinceSubmission = dateResponse
+    ? Math.floor((today - dateResponse) / (1000 * 60 * 60 * 24))
+    : Math.floor((today - dateSubmitted) / (1000 * 60 * 60 * 24));
 
   const placeholderValues = {
     BEWERBUNGSDATUM: Utilities.formatDate(
@@ -86,6 +109,7 @@ function handleStatus1(row, index, sheet) {
   const recipientEmail = row[EMAIL_COLUMN_INDEX];
 
   const actions = {
+    // Nach 14 Tagen Eingangsbestätigung nachfragen
     14: () => {
       createTask(
         "Eingangsbestätigung nachfragen",
@@ -100,6 +124,7 @@ function handleStatus1(row, index, sheet) {
         recipientEmail
       );
     },
+    // Nach weiteren 10 Tagen erneut Eingangsbestätigung nachfragen
     24: () => {
       createTask(
         "Erneut Eingangsbestätigung nachfragen",
@@ -114,7 +139,11 @@ function handleStatus1(row, index, sheet) {
         recipientEmail
       );
     },
-    38: () => sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6), // Status auf "Keine Reaktion" setzen
+    // Nach insgesamt 38 Tagen ohne Antwort Status auf "6 - Keine Reaktion" setzen
+    38: () => {
+      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
+      sheet.getRange(index + 1, DATE_RESPONSE_COLUMN_INDEX + 1).setValue(today); // Setze Datum Rückmeldung
+    },
   };
 
   if (actions[daysSinceSubmission]) {
@@ -124,18 +153,25 @@ function handleStatus1(row, index, sheet) {
 
 // Status 2: Eingang bestätigt
 function handleStatus2(row, index, sheet) {
-  const dateSubmitted = new Date(row[DATE_SUBMITTED_COLUMN_INDEX]);
-  const lastFollowUpDate = new Date(
-    row[FIRST_FOLLOWUP_COLUMN_INDEX] || dateSubmitted
-  );
+  // Prüfe, ob "Datum Rückmeldung" gesetzt ist, andernfalls Fehler werfen
+  if (!row[DATE_RESPONSE_COLUMN_INDEX]) {
+    throw new Error(
+      `Datum Rückmeldung fehlt in Zeile ${
+        index + 1
+      }. Kann Status 2 nicht verarbeiten.`
+    );
+  }
+
+  const dateResponse = new Date(row[DATE_RESPONSE_COLUMN_INDEX]);
   const today = new Date();
-  const daysSinceLastFollowUp = Math.floor(
-    (today - lastFollowUpDate) / (1000 * 60 * 60 * 24)
+
+  const daysSinceResponse = Math.floor(
+    (today - dateResponse) / (1000 * 60 * 60 * 24)
   );
 
   const placeholderValues = {
-    BEWERBUNGSDATUM: Utilities.formatDate(
-      dateSubmitted,
+    DATUM_RÜCKMELDUNG: Utilities.formatDate(
+      dateResponse,
       Session.getScriptTimeZone(),
       "dd.MM.yyyy"
     ),
@@ -144,11 +180,6 @@ function handleStatus2(row, index, sheet) {
     ANSPRECHPARTNER: row[CONTACT_PERSON_COLUMN_INDEX] || "Ansprechpartner",
     MEIN_NAME: getConfigValue("MEIN_NAME"),
     MEINE_KONTAKTDATEN: getConfigValue("MEINE_KONTAKTDATEN"),
-    DATUM_DER_NACHFRAGE: Utilities.formatDate(
-      lastFollowUpDate,
-      Session.getScriptTimeZone(),
-      "dd.MM.yyyy"
-    ),
   };
 
   const recipientEmail = row[EMAIL_COLUMN_INDEX];
@@ -182,28 +213,31 @@ function handleStatus2(row, index, sheet) {
         recipientEmail
       );
     },
-    49: () => sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6), // Status auf "Keine Reaktion" setzen
+    49: () => {
+      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
+      sheet.getRange(index + 1, DATE_RESPONSE_COLUMN_INDEX + 1).setValue(today); // Setze Datum Rückmeldung
+    },
   };
 
-  if (actions[daysSinceLastFollowUp]) {
-    actions[daysSinceLastFollowUp]();
+  if (actions[daysSinceResponse]) {
+    actions[daysSinceResponse]();
   }
 }
 
 // Status 3: Bearbeitung
 function handleStatus3(row, index, sheet) {
-  const dateSubmitted = new Date(row[DATE_SUBMITTED_COLUMN_INDEX]);
-  const lastFollowUpDate = new Date(
-    row[FIRST_FOLLOWUP_COLUMN_INDEX] || dateSubmitted
-  );
+  const dateResponse = row[DATE_RESPONSE_COLUMN_INDEX]
+    ? new Date(row[DATE_RESPONSE_COLUMN_INDEX])
+    : new Date(row[DATE_SUBMITTED_COLUMN_INDEX]); // Fallback auf Bewerbungseingang
   const today = new Date();
-  const daysSinceLastFollowUp = Math.floor(
-    (today - lastFollowUpDate) / (1000 * 60 * 60 * 24)
+
+  const daysSinceResponse = Math.floor(
+    (today - dateResponse) / (1000 * 60 * 60 * 24)
   );
 
   const placeholderValues = {
     BEWERBUNGSDATUM: Utilities.formatDate(
-      dateSubmitted,
+      dateResponse,
       Session.getScriptTimeZone(),
       "dd.MM.yyyy"
     ),
@@ -212,11 +246,6 @@ function handleStatus3(row, index, sheet) {
     ANSPRECHPARTNER: row[CONTACT_PERSON_COLUMN_INDEX] || "Ansprechpartner",
     MEIN_NAME: getConfigValue("MEIN_NAME"),
     MEINE_KONTAKTDATEN: getConfigValue("MEINE_KONTAKTDATEN"),
-    DATUM_DER_NACHFRAGE: Utilities.formatDate(
-      lastFollowUpDate,
-      Session.getScriptTimeZone(),
-      "dd.MM.yyyy"
-    ),
   };
 
   const recipientEmail = row[EMAIL_COLUMN_INDEX];
@@ -224,44 +253,43 @@ function handleStatus3(row, index, sheet) {
   const actions = {
     25: () => {
       createTask(
-        "Bearbeitungsstand nachfragen",
+        "Bearbeitungsstand prüfen",
         row,
         sheet,
         index,
         FIRST_FOLLOWUP_COLUMN_INDEX
       );
       createEmailFromTemplate(
-        "status2_first_request.txt",
+        "status3_request_update.txt",
         placeholderValues,
         recipientEmail
       );
     },
-    35: () => {
-      createTask(
-        "Erneut Bearbeitungsstand nachfragen",
-        row,
-        sheet,
-        index,
-        SECOND_FOLLOWUP_COLUMN_INDEX
-      );
-      createEmailFromTemplate(
-        "status2_second_request.txt",
-        placeholderValues,
-        recipientEmail
-      );
+    39: () => {
+      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
+      sheet.getRange(index + 1, DATE_RESPONSE_COLUMN_INDEX + 1).setValue(today); // Setze Datum Rückmeldung
     },
-    49: () => sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6), // Status auf "Keine Reaktion" setzen
   };
 
-  if (actions[daysSinceLastFollowUp]) {
-    actions[daysSinceLastFollowUp]();
+  if (actions[daysSinceResponse]) {
+    actions[daysSinceResponse]();
   }
 }
 
 // Status 4: Einladung Bewerbungsgespräch
 function handleStatus4(row, index, sheet) {
-  const interviewDate = new Date(row[INTERVIEW_DATE_COLUMN_INDEX]);
+  const interviewDate = row[INTERVIEW_DATE_COLUMN_INDEX]
+    ? new Date(row[INTERVIEW_DATE_COLUMN_INDEX])
+    : null; // Kein Fallback, Interviewdatum muss gesetzt sein
   const today = new Date();
+
+  if (!interviewDate) {
+    Logger.log(
+      `Fehler: Kein Bewerbungsgespräch-Datum für Zeile ${index + 1} gesetzt.`
+    );
+    return;
+  }
+
   const daysSinceInterview = Math.floor(
     (today - interviewDate) / (1000 * 60 * 60 * 24)
   );
@@ -296,7 +324,10 @@ function handleStatus4(row, index, sheet) {
         recipientEmail
       );
     },
-    34: () => sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6), // Status auf "Keine Reaktion" setzen
+    34: () => {
+      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
+      sheet.getRange(index + 1, DATE_RESPONSE_COLUMN_INDEX + 1).setValue(today); // Setze Datum Rückmeldung
+    },
   };
 
   if (actions[daysSinceInterview]) {
@@ -306,7 +337,7 @@ function handleStatus4(row, index, sheet) {
 
 // Status 6: Keine Reaktion
 function handleStatus6(row, index, sheet) {
-  const dateNoResponse = new Date(row[NO_RESPONSE_COLUMN_INDEX]);
+  const dateNoResponse = new Date(row[DATE_RESPONSE_COLUMN_INDEX]);
   const today = new Date();
   const daysSinceNoResponse = Math.floor(
     (today - dateNoResponse) / (1000 * 60 * 60 * 24)
@@ -314,6 +345,7 @@ function handleStatus6(row, index, sheet) {
 
   if (daysSinceNoResponse >= 90) {
     sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(7); // Status auf "Abgelehnt" setzen
+    sheet.getRange(index + 1, DATE_RESPONSE_COLUMN_INDEX + 1).setValue(today); // Aktualisiere Datum Rückmeldung
   }
 }
 
@@ -404,7 +436,11 @@ function testSaveApplication() {
     stelle: "Softwareentwickler",
     bewerbungsart: "Online",
     jobPortal: "LinkedIn",
-    datum: "2025-01-01",
+    datum: Utilities.formatDate(
+      new Date(),
+      Session.getScriptTimeZone(),
+      "yyyy-MM-dd"
+    ), // Aktuelles Datum
     kontakt: "Herr Mustermann",
     email: "test@example.com",
     telefon: "123456789",

@@ -127,7 +127,6 @@ function ensureTemplatesFolder(mainFolder) {
 /**
  * Überprüft, ob das Google Sheet "Bewerbungstracker" im Ordner "Bewerbungen" existiert.
  * Falls nicht, wird es erstellt. Setzt die erforderlichen Spalten bei Bedarf.
- *
  * @param {GoogleAppsScript.Drive.Folder} folder Der Ordner, in dem das Sheet erstellt werden soll.
  * @returns {GoogleAppsScript.Spreadsheet.Spreadsheet} Das erstellte oder gefundene Spreadsheet.
  */
@@ -141,7 +140,7 @@ function ensureBewerbungenSheet(folder) {
     "Job-Portal",
     "Datum der Bewerbung",
     "Status",
-    "Eingang bestätigt",
+    "Datum Rückmeldung",
     "Datum der Nachfrage",
     "Ansprechpartner",
     "Email",
