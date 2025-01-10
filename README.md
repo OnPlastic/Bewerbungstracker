@@ -19,9 +19,9 @@ Ein Tool, das den Bewerbungsprozess automatisiert und strukturiert. Es überwach
 | **Datei**                       | **Beschreibung**                                                                              |
 | ------------------------------- | --------------------------------------------------------------------------------------------- |
 | **InitializeProject.js**        | Einrichtungs-Script, um die Grundstruktur des Projekts zu erstellen (Ordner, Sheets, etc.).   |
-| **Code.js**                     | Hauptlogik für die Verarbeitung der Bewerbungen und den Status-Handler.                       |
-| **Test.js**                     | Enthält Funktionen für Tests (z. B. Erstellen von Test-Tasks oder Prüfen der Ordnerstruktur). |
-| **Utils.js**                    | Zusatzfunktionen für Google Drive, Google Sheets und Tasks.                                   |
+| **Code.gs**                     | Hauptlogik für die Verarbeitung der Bewerbungen und den Status-Handler.                       |
+| **Test.gs**                     | Enthält Funktionen für Tests (z. B. Erstellen von Test-Tasks oder Prüfen der Ordnerstruktur). |
+| **Utils.gs**                    | Zusatzfunktionen für Google Drive, Google Sheets und Tasks.                                   |
 | **Bewerbungsprozess Ablauf.md** | Dokumentation des Workflows für die verschiedenen Status der Bewerbungen.                     |
 | **Installationsanleitung.md**   | Installationsanleitung für das Projekt, folge den Anweisungen um zu starten.                  |
 | **.gitignore**                  | Liste von Dateien/Ordnern, die nicht ins Repository aufgenommen werden sollen.                |
