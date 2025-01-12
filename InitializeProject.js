@@ -2,7 +2,7 @@
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // - Einrichtungs-Script -
-// InitializeProject.js
+// InitializeProject.gs
 
 function initializeProject() {
   Logger.log("Starte Initialisierung...");
