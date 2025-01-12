@@ -2,7 +2,7 @@
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // - Zusatzfunktionen -
-// Utils.js
+// Utils.gs
 
 /**
  * Ruft einen Wert aus der Config.js ab.
@@ -71,7 +71,7 @@ function saveToConfig(key, value) {
  */
 function getConfigFile() {
   const folder = DriveApp.getFolderById(getMainFolderId());
-  const fileName = "Config.js";
+  const fileName = "Config.txt";
   const files = folder.getFilesByName(fileName);
 
   if (files.hasNext()) {
@@ -213,14 +213,77 @@ function ensureTaskList() {
  * @param {Object} placeholderValues - Ein Objekt mit den Platzhaltern und ihren Werten.
  * @returns {string} - Der Text mit ersetzten Platzhaltern.
  */
-function replacePlaceholders(text, placeholderValues) {
+function replacePlaceholders(text, placeholderValues, row) {
   return text.replace(/{{(.*?)}}/g, (match, key) => {
     const value = placeholderValues[key.trim()];
     if (!value) {
+      const applicationId = row[APPLICATION_ID_COLUMN_INDEX];
+      const companyName = row[COMPANY_COLUMN_INDEX] || "Unbekanntes Unternehmen";
       Logger.log(
-        `Warnung: Kein Wert für Platzhalter "${key.trim()}" gefunden.`
-      );
+        `Warnung! (Bewerbung ID: ${applicationId}, Firma: ${companyName}): Kein Wert für Platzhalter "${key.trim()}" gefunden.`
+  );
     }
+    
     return value || match;
   });
 }
+
+/**
+ * Erstellt eine neue Aufgabe in Google Tasks und aktualisiert das Datum der Aktion in der Tabelle.
+ *
+ * @param {string} taskTitle - Der Titel der zu erstellenden Aufgabe.
+ * @param {Array} row - Die Zeile der Tabelle, die die Bewerbung darstellt.
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - Das Google Sheet-Objekt.
+ * @param {number} index - Der Index der Zeile in der Tabelle.
+ * @param {number} columnIndex - Die Spaltennummer, die aktualisiert werden soll.
+ */
+function createTask(taskTitle, row, sheet, index, columnIndex) {
+  const taskListId = getConfigValue("TASK_LIST_ID");
+  const task = {
+    title: `${taskTitle} für ${row[COMPANY_COLUMN_INDEX]}`,
+    notes: `Details zur Bewerbung: ${row[JOB_DESCRIPTION_COLUMN_INDEX]}`,
+    due: getToday().toISOString(), // Fälligkeitsdatum ist heute
+  };
+
+  Tasks.Tasks.insert(task, taskListId);
+
+  // Aktualisiere die Tabelle mit dem aktuellen Datum
+  const today = Utilities.formatDate(
+    getToday(),
+    Session.getScriptTimeZone(),
+    "yyyy-MM-dd"
+  );
+  sheet.getRange(index + 1, columnIndex + 1).setValue(today);
+}
+
+/**
+ * Erstellt eine E-Mail aus einer Vorlage und sendet sie an die angegebene Adresse.
+ *
+ * @param {string} templateName - Der Name der E-Mail-Vorlage.
+ * @param {Object} placeholderValues - Platzhalterwerte, die in der Vorlage ersetzt werden sollen.
+ * @param {string} recipient - Die E-Mail-Adresse des Empfängers.
+ */
+function createEmailFromTemplate(templateName, placeholderValues, recipient, row) {
+  const folderId = getConfigValue("TEMPLATES_FOLDER_ID"); // ID des Ordners mit den E-Mail-Vorlagen
+  const folder = DriveApp.getFolderById(folderId);
+  const files = folder.getFilesByName(templateName);
+
+  if (!files.hasNext()) {
+    throw new Error(`Vorlage "${templateName}" nicht gefunden.`);
+  }
+
+  const file = files.next();
+  const template = file.getBlob().getDataAsString();
+
+  // Extrahiere den Betreff und den E-Mail-Body
+  const [subjectTemplate, ...bodyTemplateLines] = template.split("\n");
+  const emailBodyTemplate = bodyTemplateLines.join("\n");
+
+  // Ersetze die Platzhalter
+  const emailSubject = replacePlaceholders(subjectTemplate, placeholderValues, row);
+  const emailBody = replacePlaceholders(emailBodyTemplate, placeholderValues, row);
+
+  // Sende die E-Mail
+  GmailApp.createDraft(recipient, emailSubject, emailBody);
+}
+

@@ -1,7 +1,7 @@
 //*****Script V:0.1 A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
-// Code.js
+// Code.gs
 
 // Globale Konstanten
 const APPLICATION_ID_COLUMN_INDEX = 0; // BewerbungsID
