@@ -122,10 +122,9 @@
         // Daten sammeln und Standardwerte setzen
         formData.forEach((value, key) => {
           if (key === "datum" && !value) {
-            // Setze das aktuelle Datum, wenn kein Datum eingegeben wurde
-            const today = new Date().toISOString().split("T")[0];
-            data[key] = today;
-            datumField.value = today; // Zeige das aktuelle Datum im Formular
+            // Setze das aktuelle(simulierte) Datum, wenn kein Datum eingegeben wurde
+            data[key] = simulatedDate; 
+            datumField.value = simulatedDate; // Zeige das aktuelle Datum im Formular
           } else {
             data[key] = value.trim();
           }
@@ -151,3 +150,4 @@
     </script>
   </body>
 </html>
+
