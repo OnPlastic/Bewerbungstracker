@@ -138,7 +138,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 ### 2. Automatische Nachverfolgung
 
 1. **Trigger einrichten**:
-   - Gehe zu "Bearbeiten" > "Trigger" im Apps Script-Projekt.
+   - Gehe zu "Seitenleist" > **"Trigger"** im Apps Script-Projekt. (Uhren-Symbol)
    - Lege einen Trigger für **`mainProcess()`** fest, z. B. **täglich**.
 2. Das Script erstellt basierend auf dem Bewerbungsstatus automatisch Aufgaben und E-Mails.
 
@@ -168,7 +168,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 2. **Templates fehlen**:
    - Überprüfe, ob alle Template-Dateien im Ordner **"templates"** vorhanden sind.
 3. **Logger nutzen**:
-   - Verwende `Logger.log` im Apps Script-Editor für Debugging.
+   - Verwende `Fehlerbehebung` im Apps Script-Editor für Debugging.
 
 ---
 
