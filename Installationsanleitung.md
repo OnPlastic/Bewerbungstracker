@@ -36,7 +36,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
   - `status1_second_request.txt`
   - `status2_first_request.txt`
   - `status2_second_request.txt`
-  - `status3_request_update.txt`
+  - `status3_last_request.txt`
   - `status4_followup_interview.txt`
 - **Bewerbungsprozess Ablauf.md** (Zeitabläufe)
 - **Installationsanleitung.md** (Projekteinrichtung)
@@ -50,7 +50,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 1. Öffne [Google Apps Script](https://script.google.com/) und erstelle ein neues Projekt.
 2. Benenne das Projekt, z. B. **"Bewerbungstracker"**.
 
-#### 3.2 Skriptdateien hochladen
+#### 3.2 Skriptdateien erstellen -> hochladen
 
 1. Erstelle leere Skriptdateien im Apps Script-Projekt und kopiere den Inhalt aus dem Repository:
    - **Code.js**

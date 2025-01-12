@@ -2,13 +2,14 @@
 
 ---
 
-- `status1: Beworben`
-- `status2: Eingang bestätigt`
-- `status3: Bearbeitung`
-- `status4: Einladung Bew.gespräch`
-- `status5: Bew. erfolgreich`
-- `status6: Keine Reaktion`
-- `status7: Bew. nicht erfolgreich`
+- `Status1: Beworben`
+- `Status2: Eingang bestätigt`
+- `Status3: Bearbeitung`
+- `Status4: Einladung Bew.gespräch`
+- `Status5: Bew. erfolgreich`
+- `Status6: Keine Reaktion`
+- `Status7: Bew. nicht erfolgreich`
+- `Status8: Bewerbung vorgemerkt`
 
 ---
 

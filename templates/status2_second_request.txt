@@ -2,12 +2,15 @@ Betreff: Erneute Nachfrage: Bearbeitungsstand meiner Bewerbung
 
 Sehr geehrte/r {{ANSPRECHPARTNER}},
 
-ich hoffe, diese Nachricht erreicht Sie gut. Am {{BEWERBUNGSDATUM}} habe ich meine Bewerbung für die Position "{{STELLE}}" bei Ihrem Unternehmen eingereicht. Am {{DATUM_DER_NACHFRAGE}} hatte ich bereits höflich nach dem Bearbeitungsstand gefragt, bisher aber leider keine Rückmeldung erhalten.
+ich hoffe, diese Nachricht erreicht Sie gut. Am {{BEWERBUNGSDATUM}} habe ich meine Bewerbung für die Position als {{STELLE}} bei Ihrem Unternehmen eingereicht. Am {{DATUM_DER_NACHFRAGE}} hatte ich bereits höflich nach dem Bearbeitungsstand gefragt, bisher aber leider keine Rückmeldung erhalten.
 
 Daher möchte ich mich erneut erkundigen, ob es Neuigkeiten zu meiner Bewerbung gibt oder ob ich Ihnen weitere Informationen zukommen lassen kann, um den Prozess zu unterstützen. Ich würde mich über ein kurzes Update sehr freuen.
 
 Vielen Dank vorab für Ihre Zeit und Mühe.
 
-Mit freundlichen Grüßen,
+
+Mit freundlichen Grüßen
+
 {{MEIN_NAME}}
+
 {{MEINE_KONTAKTDATEN}}

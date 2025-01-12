@@ -2,12 +2,15 @@ Betreff: Erinnerung: Eingangsbestätigung meiner Bewerbung
 
 Sehr geehrte/r {{ANSPRECHPARTNER}}
 
-ich möchte mich erneut bei Ihnen melden. Am {{BEWERBUNGSDATUM}} habe ich Ihnen für die Position "{{STELLE}}" meine Bewerbung zukommen lassen und am {{DATUM_DER_NACHFRAGE}} nach dem Eingang meiner Unterlagen gefragt. Leider habe ich bisher keine Rückmeldung erhalten. 
+ich möchte mich erneut bei Ihnen melden. Am {{BEWERBUNGSDATUM}} habe ich Ihnen für die Position als {{STELLE}} meine Bewerbung zukommen lassen und am {{DATUM_DER_NACHFRAGE}} nach dem Eingang meiner Unterlagen gefragt. Leider habe ich bisher keine Rückmeldung erhalten. 
 
 Höflich möchte ich fragen, ob Sie meine Bewerbung bei sich verzeichnen konnten, oder ob es möglicherweise Verzögerungen gibt. Für eine kurze Rückmeldung wäre ich Ihnen sehr dankbar.
 
 Vielen Dank vorab für Ihre Zeit und Mühe.
 
-Mit freundlichen Grüßen,
+
+Mit freundlichen Grüßen
+
 {{MEIN_NAME}}
+
 {{MEINE_KONTAKTDATEN}}
