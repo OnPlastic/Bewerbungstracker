@@ -129,7 +129,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
      (Hinweis: _Wenn du nur dich selbst autorisierst musst du im Browser mit deinem Google-Konto angemeldet sein._)
    - Notiere dir die bereitgestellte **URL**.
 2. **Daten eingeben**:
-   - Rufe die Website auf und trage die Bewerbungsdaten in die Eingabemaske ein.
+   - Rufe die Website auf und trage die Bewerbungsdaten in die Eingabemaske ein. Bei Datumsänderungen direkt in der Tabelle, bitte dieses Format anwendne : `YYYY-MM-DD`.
 3. **Absenden**:
    - Klicke auf "Speichern", um die Daten im Google Sheet zu speichern und einen Firmenordner im Drive zu erstellen.
 
