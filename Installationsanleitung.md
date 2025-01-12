@@ -1,5 +1,7 @@
 # Bewerbungstracker - Installation & Anleitung
 
+Version: 1.0 Autor: sIn
+
 ## Voraussetzungen
 
 1. **Google-Konto**: Erforderlich für die Nutzung von Google Drive, Google Sheets und Google Apps Script.
