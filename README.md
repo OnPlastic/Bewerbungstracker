@@ -42,7 +42,7 @@ Ein Tool, das den Bewerbungsprozess automatisiert und strukturiert. Es überwach
 
 3. **Tests ausführen:**
 
-   - Verwende die Testfunktionen in `Test.js`, um einzelne Module zu prüfen:
+   - Verwende die Testfunktionen in `Test.gs`, um einzelne Module zu prüfen:
      - **`createTestTask()`**: Erstellt einen Test-Task in Google Tasks.
      - **`testEnsureBewerbungenSheet()`**: Überprüft die Google Sheets-Struktur.
 

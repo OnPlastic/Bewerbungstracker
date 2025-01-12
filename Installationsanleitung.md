@@ -57,6 +57,9 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
    - **InitializeProject.js**
    - **Utils.js**
    - **Test.js**
+2. _*Wichtiger Hinweis:*_
+   - Die Dateien im Repository habend die Endung `.js`.
+   - Im Google Apps Skript Editor wird die Endung automatisch auf `.gs` geändert. Gebe beim Erstellen der Dateien daher nur den Namen an, z. B. `initializeProject`, `Test`, `Utils`.
 
 #### 3.3 HTML-Formular hinzufügen
 
@@ -72,7 +75,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
    - Führe die Funktion aus.
 2. Überprüfe, ob folgende Elemente erstellt wurden:
    - Google Drive-Ordner **"Bewerbungen"**.
-   - Google Sheet **"Bewerbungstracker"** mit den erforderlichen Spalten.
+   - Google Sheet **"Bewerbungstracker"** mit den erforderlichen Spalten s. u.
    - Spalten in **"Bewerbungstracker"** (TabellenblattBezeichnung: Bewerbungstracker).
      - `BewerbungsID`
      - `Unternehmen`
@@ -109,7 +112,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 
 ### 6. Persönliche Daten aktualisieren
 
-1. Öffne die Datei **Config.js** im Ordner **"Bewerbungen"**.
+1. Öffne im Google Drive die Datei `Config.txt` im Ordner **"Bewerbungen"**.
 2. Ergänze die Platzhalter mit deinen persönlichen Informationen:
    - **MEIN_NAME**: Dein vollständiger Name.
    - **MEINE_KONTAKTDATEN**: Deine E-Mail-Adresse und Telefonnummer.
@@ -121,10 +124,10 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 ### 1. Eingabemaske verwenden
 
 1. **Website bereitstellen**:
-   - Gehe im Apps Script-Editor zu "Veröffentlichen" > "Web-App bereitstellen".
+   - Gehe im Apps Script-Editor zu **"Veröffentlichen"** > **"Web-App bereitstellen"**.
    - Wähle bei "Wer hat Zugriff" die Option **"Nur ich slebst"**.  
      (Hinweis: _Wenn du nur dich selbst autorisierst musst du im Browser mit deinem Google-Konto angemeldet sein._)
-   - Notiere dir die bereitgestellte URL.
+   - Notiere dir die bereitgestellte **URL**.
 2. **Daten eingeben**:
    - Rufe die Website auf und trage die Bewerbungsdaten in die Eingabemaske ein.
 3. **Absenden**:
