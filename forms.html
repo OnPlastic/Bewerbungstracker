@@ -1,11 +1,269 @@
 <!DOCTYPE html>
-<!-- Skript Version:0.1 A:sIn -->
+<!-- Skript Version:1.2 A:sIn -->
 <!-- Bewerbungstracker -->
 <!-- Eingabemaske für Bewerbungsinformationen -->
 <html>
   <head>
     <title>Bewerbungstracker - Neue Bewerbung</title>
-    <style>
+    <styl<!DOCTYPE html>
+      <!-- Skript Version:0.1 A:sIn -->
+      <!-- Bewerbungstracker -->
+      <!-- Eingabemaske für Bewerbungsinformationen -->
+      <html>
+        <head>
+          <title>Bewerbungstracker - Neue Bewerbung</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 20px;
+              text-align: center;
+            }
+            h1 {
+              text-align: left;
+              width: 93%;
+              margin: 20px auto;
+              font-size: 24px;
+              max-width: 700px;
+            }
+            form {
+              display: inline-block;
+              text-align: left;
+              width: 100%;
+              max-width: 700px;
+              margin: 0 auto;
+            }
+            label {
+              display: block;
+              margin-top: 10px;
+              font-weight: bold;
+            }
+            input,
+            select,
+            textarea {
+              width: 100%;
+              padding: 10px;
+              margin-top: 5px;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              box-sizing: border-box;
+            }
+            button {
+              background-color: #007bff;
+              color: white;
+              border: none;
+              padding: 10px 20px;
+              margin-top: 20px;
+              border-radius: 4px;
+              cursor: pointer;
+            }
+            button:hover {
+              background-color: #0056b3;
+            }
+            .error {
+              color: red;
+              font-size: 14px;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Bewerbungstracker by s|n</h1>
+          <form id="bewerbungForm">
+      
+          <label for="bewerbungsauswahl">Bewerbung auswählen</label>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
+          <select id="bewerbungsauswahl" name="bewerbungsauswahl">
+            <option value="" selected disabled>Bitte auswählen...</option>
+          </select>
+            <button type="button" onclick="applySelectedApplication()" style="margin-top: 5px; ">Übernehmen</button>
+          </div>
+            <label for="neuebewerbung">Neue Bewerubng eintragen</label>
+            <div style="width: 100%; height: 1px; background-color: #ccc; margin-top: 10px;"></div>
+            <label for="unternehmen"
+              >Unternehmen <span class="error" id="errorUnternehmen"></span
+            ></label>
+            <input type="text" id="unternehmen" name="unternehmen" required />
+      
+            <label for="stelle">Stelle</label>
+            <input type="text" id="stelle" name="stelle" />
+      
+            <label for="status">Status</label>
+            <select id="status" name="status">
+              <option value="1" selected>1 Beworben</option>
+              <option value="2">2 Eingang bestätigt</option>
+              <option value="3">3 Bearbeitung</option>
+              <option value="4">4 Bewerbungsgespräch</option>
+              <option value="5">5 Erfolgreich</option>
+              <option value="6">6 Keine Reaktion</option>
+              <option value="7">7 Abgelehnt</option>
+              <option value="8">8 Bewerbung vorgemerkt</option>
+            </select>
+      
+            <label for="bewerbungsart">Art der Bewerbung</label>
+            <select id="bewerbungsart" name="bewerbungsart">
+              <option value="Online">Online</option>
+              <option value="E-Mail">E-Mail</option>
+              <option value="Post">Post</option>
+            </select>
+      
+            <label for="jobPortal">Job-Portal</label>
+            <input type="text" id="jobPortal" name="jobPortal" />
+      
+            <label for="loginInfo">Logininformationen</label>
+            <textarea id="loginInfo" name="loginInfo"></textarea>
+      
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div style="flex: 1;">
+                <label for="datum">Datum der Bewerbung</label>
+                <input type="date" id="datum" name="datum" />
+              </div>
+              <div style="flex: 1;">
+                <label for="datumRueckmeldung">Datum Rückmeldung</label>
+                <input type="date" id="datumRueckmeldung" name="datumRueckmeldung" />
+              </div>
+              <div style="flex: 1;">
+                <label for="datumGespräch">Bewerbungsgespräch</label>
+                <input type="date" id="datumGespräch" name="datumGespräch" />
+              </div>
+            </div>
+            <label for="kontakt">Ansprechpartner</label>
+            <input type="text" id="kontakt" name="kontakt" />
+      
+            <label for="email">E-Mail</label>
+            <input type="email" id="email" name="email" />
+      
+            <label for="telefon">Telefon</label>
+            <input type="tel" id="telefon" name="telefon" />
+      
+            <label for="link">Link-Stellenbeschreibung</label>
+            <input type="url" id="link" name="link" />
+      
+            <label for="kommentar">Kommentar</label>
+            <textarea id="kommentar" name="kommentar"></textarea>
+      
+            <button type="button" onclick="submitForm()">Speichern</button>
+      
+            <!-- Verstecktes Eingabefeld für die Bew.ID -->
+            <input type="hidden" id="applicationId" name="applicationId" />
+          </form>
+          <script>
+            function loadApplications() {
+              // Rufe die Daten aus dem Apps Script ab
+              google.script.run.withSuccessHandler(fillApplicationDropdown).getAllApplications();
+            }
+            function fillApplicationDropdown(applications) {
+              const dropdown = document.getElementById("bewerbungsauswahl");
+              dropdown.innerHTML = '<option value="" selected disabled>Bitte auswählen...</option>'; // Dropdown zurücksetzen
+      
+              // Füge die Optionen aus den Bewerbungsdaten hinzu
+              applications.forEach(app => {
+                const option = document.createElement("option");
+                option.value = app.id; // Speichere die BewerbungsID als Wert
+                option.textContent = `${app.firma} - ${app.stelle} (${app.ansprechpartner})`; // Zeige Firma, Stelle und Ansprechpartner
+                dropdown.appendChild(option);
+              });
+            }
+            // Rufe die Funktion beim Laden der Seite auf
+            window.onload = loadApplications;
+      
+            function applySelectedApplication() {
+              const dropdown = document.getElementById("bewerbungsauswahl");
+              const applicationId = dropdown.value; // Hol die ID der ausgewählten Bewerbung
+      
+              if (!applicationId) {
+                alert("Bitte wählen Sie eine Bewerbung aus.");
+                return;
+              }
+      
+              // Rufe die Apps Script-Funktion auf und parse die Rückgabe
+              google.script.run
+                .withSuccessHandler(data => {
+                  if (data) {
+                    const parsedData = JSON.parse(data);
+                    fillForm(parsedData);
+                  } else {
+                    alert("Bewerbung nicht gefunden.")
+                  }
+                })
+                .getApplicationDetailsById(applicationId);
+            }
+      
+            function fillForm(data) {
+              if (!data) {
+                alert("Bewerbung nicht gefunden.");
+                return;
+              }
+              console.log("Erhalte Daten:", data);
+              // Übertrage die Daten ins Formular
+              document.getElementById("unternehmen").value = data.firma || "";
+              document.getElementById("stelle").value = data.stelle || "";
+              document.getElementById("status").value = data.status || "1";
+              document.getElementById("bewerbungsart").value = data.bewerbungsart || "Online";
+              document.getElementById("jobPortal").value = data.jobPortal || "";
+              document.getElementById("datum").value = data.datum || "";
+              document.getElementById("datumRueckmeldung").value = data.datumRueckmeldung || "";
+              document.getElementById("datumGespräch").value = data.datumGespräch || "";
+              document.getElementById("kontakt").value = data.ansprechpartner || "";
+              document.getElementById("email").value = data.email || "";
+              document.getElementById("telefon").value = data.telefon || "";
+              document.getElementById("loginInfo").value = data.loginInfo || "";
+              document.getElementById("link").value = data.link || "";
+              document.getElementById("kommentar").value = data.kommentar || "";
+              console.log("Fromular erfolgreich befüllt!");
+              // Dropdown zurücksetzen
+              document.getElementById("bewerbungsauswahl").value = "";
+            }
+      
+            
+            function submitForm() {
+              const errorElement = document.getElementById("errorUnternehmen");
+              const unternehmen = document.getElementById("unternehmen").value.trim();
+              const datumField = document.getElementById("datum");
+      
+              // Validierung für das Feld "Unternehmen"
+              if (!unternehmen) {
+                errorElement.textContent = "Dieses Feld darf nicht leer sein.";
+                return; // Keine Speicherung durchführen
+              } else {
+                errorElement.textContent = ""; // Fehlermeldung entfernen, falls vorhanden
+              }
+      
+              const formData = new FormData(document.getElementById("bewerbungForm"));
+              const data = {};
+      
+              // Daten sammeln und Standardwerte setzen
+              formData.forEach((value, key) => {
+                if (key === "datum" && !value) {
+                  // Setze das aktuelle(simulierte) Datum, wenn kein Datum eingegeben wurde
+                  data[key] = simulatedDate; 
+                  datumField.value = simulatedDate; // Zeige das aktuelle Datum im Formular
+                } else {
+                  data[key] = value.trim();
+                }
+              });
+      
+              // Aufruf der Apps-Skript-Funktion
+              google.script.run
+                .withSuccessHandler(() => {
+                  alert("Bewerbung erfolgreich gespeichert!");
+                  clearForm(); // Formularfelder leeren
+                })
+                .withFailureHandler((error) =>
+                  alert("Fehler: " + JSON.stringify(error))
+                )
+                .saveApplication(data);
+            }
+      
+            // Funktion zum Leeren der Formularfelder
+            function clearForm() {
+              document.getElementById("bewerbungForm").reset(); // Setzt das Formular zurück
+              document.getElementById("errorUnternehmen").textContent = ""; // Entfernt mögliche Fehlermeldungen
+            }
+          </script>
+        </body>
+      </html>
+      
+      
+      e>
       body {
         font-family: Arial, sans-serif;
         margin: 20px;
