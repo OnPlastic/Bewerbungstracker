@@ -1,8 +1,8 @@
-//*****Script V:0.2 A:sIn*****
+//*****Script V:1.2 A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // - Zusatzfunktionen -
-// Utils.gs
+// Utils.js
 
 /**
  * Ruft einen Wert aus der Config.js ab.
@@ -287,3 +287,64 @@ function createEmailFromTemplate(templateName, placeholderValues, recipient, row
   GmailApp.createDraft(recipient, emailSubject, emailBody);
 }
 
+/**
+ * Funktionen die dynamisch Inhalte aus dem Sheet laden und im Forms anzeigen
+ */
+
+function getAllApplications() {
+  const sheetId = getConfigValue("SHEET_ID");
+  const sheet = SpreadsheetApp.openById(sheetId).getSheetByName("Bewerbungstracker");
+  const data = sheet.getDataRange().getValues();
+
+  // Überspringe die Kopfzeile und erstelle ein Array für die Dropdown-Optionen
+  const applications = data.slice(1).map(row => ({
+    id: row[0], // BewerbungsID
+    firma: row[1] || "Unbekannte Firma",
+    stelle: row[2] || "Keine Stelle",
+    ansprechpartner: row[9] || "Kein Ansprechpartner"
+  }));
+
+  return applications; // Gibt die Daten für das Dropdown zurück
+}
+
+function getApplicationDetailsById(applicationId) {
+  const sheetId = getConfigValue("SHEET_ID");
+  const sheet = SpreadsheetApp.openById(sheetId).getSheetByName("Bewerbungstracker");
+  const data = sheet.getDataRange().getValues();
+
+  Logger.log("Gesuchte ID: " + applicationId + " | Länge: " + applicationId.trim().length);
+  Logger.log("Gesamte Datenanzahl: " + data.length);
+
+  // Logge alle IDs mit ihrer Länge
+  data.forEach(function(row, index) {
+    Logger.log("Zeile " + index + ": Vorhandene ID: " + row[0] + " | Länge: " + String(row[0]).trim().length);
+  });
+
+  // Suche die Zeile mit der entsprechenden ID
+  const application = data.slice(1).find(row => String(row[0]).trim() === applicationId.trim());
+
+  if (!application) {
+    Logger.log("Keine Bewerbung mit der ID " + applicationId + " gefunden.");
+    return null; // Rückgabe null, wenn keine Bewerbung gefunden wurde
+  }
+
+  Logger.log("Bewerbung gefunden: " + application.join(", "));
+  
+  return JSON.stringify({
+    id: application[0],
+    firma: application[1],
+    stelle: application[2],
+    status: application[6],
+    bewerbungsart: application[3],
+    jobPortal: application[4],
+    datum: application[5],
+    datumRueckmeldung: application[7],
+    datumGespräch: application[13],
+    ansprechpartner: application[9],
+    email: application[10],
+    telefon: application[11],
+    loginInfo: application[12],
+    link: application[15],
+    kommentar: application[16],
+  });
+}
