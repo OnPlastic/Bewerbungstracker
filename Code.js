@@ -48,7 +48,7 @@ function mainProcess() {
  */
 function doGet(e) {
   const testDate = getToday().toISOString().split("T")[0]; // Simuliertes Datum aus dem Testmode falls, gesetzt
-  return HtmlService.createHtmlOutputFromFile("forms_testmode.html")
+  return HtmlService.createHtmlOutputFromFile("forms.html")
     .append(`<script>var simulatedDate = "${testDate}";</script>`)
     .setTitle("Bewerbungstracker")
     .setWidth(700)
