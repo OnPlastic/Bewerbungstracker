@@ -1,4 +1,4 @@
-//*****Script V:0.1 A:sIn*****
+//*****Script V:2.1-final A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // - Einrichtungs-Script -

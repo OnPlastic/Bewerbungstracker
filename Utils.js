@@ -1,8 +1,8 @@
-//*****Script V:1.2 A:sIn*****
+//*****Script V:2.1-final A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // - Zusatzfunktionen -
-// Utils.js
+// Utils.gs
 
 /**
  * Ruft einen Wert aus der Config.js ab.
@@ -337,9 +337,9 @@ function getApplicationDetailsById(applicationId) {
     status: application[6],
     bewerbungsart: application[3],
     jobPortal: application[4],
-    datum: application[5],
-    datumRueckmeldung: application[7],
-    datumGespräch: application[13],
+    datum: formatDate(application[5]), // Formatierung für Datum der Bewerbung
+    datumRueckmeldung: formatDate(application[7]), // Formatierung für Datum Rückmeldung
+    datumGespräch: formatDate(application[13]), // Formatierung für Bewerbungsgespräch
     ansprechpartner: application[9],
     email: application[10],
     telefon: application[11],
@@ -347,4 +347,35 @@ function getApplicationDetailsById(applicationId) {
     link: application[15],
     kommentar: application[16],
   });
+}
+
+
+/**
+function formatDate(date) {
+  if(!date) return ""; // Wenn kein Datum vorhanden, gib leeren String zurück
+  const jsDate = new Date(date);
+  return jsDate.toISOString().split("T")[0]; // Konvertiere in YYY-MM-DD
+}
+*/
+
+function formatDate(date) {
+  if (!date) {
+    Logger.log("Kein Datum vorhanden. Rückgabe: Leer");
+    return ""; // Wenn kein Datum vorhanden, gib leeren String zurück
+  }
+
+  Logger.log("Originaler Wert aus dem Sheet: " + date);
+
+  // Versuche, das Datum in ein JavaScript-Datum zu konvertieren
+  const jsDate = new Date(date);
+  Logger.log("Konvertierter JavaScript-Datum-Wert: " + jsDate);
+
+  const year = jsDate.getFullYear();
+  const month = String(jsDate.getMonth() + 1).padStart(2, '0'); // Monate sind 0-basiert
+  const day = String(jsDate.getDate()).padStart(2, '0');
+
+  const formattedDate = `${year}-${month}-${day}`;
+  Logger.log("Formatiertes Datum (Lokal): " + formattedDate);
+
+  return formattedDate;
 }

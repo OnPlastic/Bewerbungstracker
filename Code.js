@@ -1,4 +1,4 @@
-//*****Script V:0.1 A:sIn*****
+//*****Script V:2.1-final A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // Code.gs
@@ -48,7 +48,7 @@ function mainProcess() {
  */
 function doGet(e) {
   const testDate = getToday().toISOString().split("T")[0]; // Simuliertes Datum aus dem Testmode falls, gesetzt
-  return HtmlService.createHtmlOutputFromFile("forms.html")
+  return HtmlService.createHtmlOutputFromFile("forms_testmode.html")
     .append(`<script>var simulatedDate = "${testDate}";</script>`)
     .setTitle("Bewerbungstracker")
     .setWidth(700)
@@ -436,50 +436,68 @@ function handleStatus7(row, index, sheet) {
 }
 
 /**
- * Speichert die Bewerbung und erstellt einen Ordner.
+ * Speichert oder aktualisiert die Bewerbung in der Tabelle.
+ * Erstellt einen Ordner nur für neue Bewerbungen.
  *
  * @param {Object} formData - Die übermittelten Formulardaten.
  */
 function saveApplication(formData) {
-  const folderId = getConfigValue("FOLDER_ID");
-  const mainFolder = DriveApp.getFolderById(folderId);
+    
+    const sheetId = getConfigValue("SHEET_ID");
+    const sheet = SpreadsheetApp.openById(sheetId).getSheetByName("Bewerbungstracker");
+    const data = sheet.getDataRange().getValues();
 
-  // Ordner für das Unternehmen erstellen oder abrufen
-  const companyName = formData.unternehmen.trim();
-  let companyFolder = mainFolder.getFoldersByName(companyName);
+    // Log Formulardaten
+    Logger.log("Erhaltene Formulardaten: " + JSON.stringify(formData));
 
-  if (companyFolder.hasNext()) {
-    companyFolder = companyFolder.next();
-  } else {
-    companyFolder = mainFolder.createFolder(companyName);
-  }
+    // Überprüfen, ob die Bewerbung bereits existiert (via BewerbungsID)
+    const existingRowIndex = data.slice(1).findIndex(row => row[0] === formData.applicationId);
 
-  // Bewerbung in die Tabelle einfügen
-  const sheetId = getConfigValue("SHEET_ID");
-  const sheet =
-    SpreadsheetApp.openById(sheetId).getSheetByName("Bewerbungstracker");
+    const newRow = [
+        formData.applicationId || Utilities.getUuid(), // BewerbungsID
+        formData.unternehmen.trim(),
+        formData.stelle.trim(),
+        formData.bewerbungsart,
+        formData.jobPortal || "", // Optionales Feld
+        formData.datum || "", // Datum der Bewerbung
+        formData.status || 1, // Status aus formData übernehmen, Standardwert "1"
+        formData.datumRueckmeldung || "", // Datum Rückmeldung
+        "", // Datum der Nachfrage
+        formData.kontakt || "",
+        formData.email || "",
+        formData.telefon || "",
+        formData.loginInfo || "",
+        formData.datumGespräch || "", // Bewerbungsgespräch Datum
+        "", // Bewerbungsgespräch Ort
+        formData.link || "",
+        formData.kommentar || "",
+    ];
 
-  const newRow = [
-    Utilities.getUuid(), // BewerbungsID
-    formData.unternehmen.trim(),
-    formData.stelle.trim(),
-    formData.bewerbungsart,
-    formData.jobPortal || "", // Optionales Feld
-    formData.datum,
-    1, // Status: Standardmäßig "1" (Beworben)
-    "", // Eingang bestätigt
-    "", // Datum der Nachfrage
-    formData.kontakt || "",
-    formData.email || "",
-    formData.telefon || "",
-    formData.loginInfo || "",
-    "", // Bewerbungsgespräch Datum
-    "", // Bewerbungsgespräch Ort
-    formData.link || "",
-    formData.kommentar || "",
-  ];
+    if (existingRowIndex >= 0) {
+        // Aktualisiere bestehende Zeile
+        Logger.log("Bewerbung existiert bereits. Aktualisiere Zeile " + (existingRowIndex + 2));
+        sheet.getRange(existingRowIndex + 2, 1, 1, newRow.length).setValues([newRow]);
+        Logger.log("Aktualisierte Daten: " + JSON.stringify(newRow));
+    } else {
+        // Füge neue Zeile hinzu und erstelle einen Ordner
+        Logger.log("Bewerbung existiert nicht. Füge neue Zeile hinzu und erstelle Ordner.");
+        sheet.appendRow(newRow);
+        Logger.log("Hinzugefügte Daten: " + JSON.stringify(newRow));
 
-  sheet.appendRow(newRow);
+        // Ordner für das Unternehmen erstellen
+        const folderId = getConfigValue("FOLDER_ID");
+        const mainFolder = DriveApp.getFolderById(folderId);
+        const companyName = formData.unternehmen.trim();
+        let companyFolder = mainFolder.getFoldersByName(companyName);
+
+        if (companyFolder.hasNext()) {
+            companyFolder = companyFolder.next();
+            Logger.log(`Ordner für Unternehmen "${companyName}" existiert bereits.`);
+        } else {
+            companyFolder = mainFolder.createFolder(companyName);
+            Logger.log(`Neuer Ordner für Unternehmen "${companyName}" wurde erstellt.`);
+        }
+    }
 }
 
 // Dummy_Data für die saveApplication
