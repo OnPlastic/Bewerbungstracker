@@ -63,7 +63,14 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
    - Die Dateien im Repository habend die Endung `.js`.
    - Im Google Apps Skript Editor wird die Endung automatisch auf `.gs` geändert. Gebe beim Erstellen der Dateien daher nur den Namen an, z. B. `InitializeProject`, `Test`, `Utils`.
 
-#### 3.3 HTML-Formular hinzufügen
+#### 3.3 Füge im Google Apps Script-Editor unter **Dienste** folgende hinzu:
+
+- Google-`Drive`-API
+- `Gmail`-API
+- Google-`Sheets`API
+- Google- `Tasks`API
+
+#### 3.4 HTML-Formular hinzufügen
 
 1. Füge eine neue HTML-Datei hinzu und benenne sie **forms.html**.
 2. Kopiere den Inhalt aus **forms.html** des Repositories in die Datei.
@@ -97,11 +104,6 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
      - `Stellenbeschreibung Link`
      - `Kommentar`
    - Google Tasks-Liste **"Bewerbungen"**.
-3. Füge im Google Apps Script-Editor unter **Dienste** folgende hinzu:
-   - `Drive`
-   - `Gmail`
-   - `Sheets`
-   - `Tasks`
 
 ---
 
