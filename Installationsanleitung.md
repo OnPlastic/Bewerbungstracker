@@ -132,7 +132,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 ### 1. Eingabemaske verwenden
 
 1. **Website bereitstellen**:
-   - Gehe im Apps Script-Editor zu **"Bereitstellen"** > **"Neuebereitstellung"** Konfiguration - **Web-App**.
+   - Klicke im Apps Script-Editor auf **"Bereitstellen"** > **"Neuebereitstellung"** Konfiguration - **Web-App**.
    - Wähle bei "Wer hat Zugriff" die Option **"Nur ich selbst"**.  
      (Hinweis: _Wenn du nur dich selbst autorisierst musst du im Browser mit deinem Google-Konto angemeldet sein._)
    - Notiere dir die bereitgestellte **URL**.
