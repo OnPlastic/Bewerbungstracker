@@ -154,7 +154,7 @@ function handleStatus1(row, index, sheet) {
         SECOND_FOLLOWUP_COLUMN_INDEX
       );
     },
-    // Nach insgesamt 38 Tagen ohne Antwor, Status auf "6 - Keine Reaktion" setzen
+    // Nach insgesamt 38 Tagen ohne Antwort, auf "Status 6: - Keine Reaktion" setzen
     38: () => {
       sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
       createTask(
@@ -283,7 +283,7 @@ function handleStatus3(row, index, sheet) {
 
   const placeholderValues = {
     DATUM_RÜCKMELDUNG: Utilities.formatDate(
-       dateResponse,
+      dateResponse,
       Session.getScriptTimeZone(),
       "dd.MM.yyyy"
     ),
@@ -442,62 +442,62 @@ function handleStatus7(row, index, sheet) {
  * @param {Object} formData - Die übermittelten Formulardaten.
  */
 function saveApplication(formData) {
-    
-    const sheetId = getConfigValue("SHEET_ID");
-    const sheet = SpreadsheetApp.openById(sheetId).getSheetByName("Bewerbungstracker");
-    const data = sheet.getDataRange().getValues();
 
-    // Log Formulardaten
-    Logger.log("Erhaltene Formulardaten: " + JSON.stringify(formData));
+  const sheetId = getConfigValue("SHEET_ID");
+  const sheet = SpreadsheetApp.openById(sheetId).getSheetByName("Bewerbungstracker");
+  const data = sheet.getDataRange().getValues();
 
-    // Überprüfen, ob die Bewerbung bereits existiert (via BewerbungsID)
-    const existingRowIndex = data.slice(1).findIndex(row => row[0] === formData.applicationId);
+  // Log Formulardaten
+  Logger.log("Erhaltene Formulardaten: " + JSON.stringify(formData));
 
-    const newRow = [
-        formData.applicationId || Utilities.getUuid(), // BewerbungsID
-        formData.unternehmen.trim(),
-        formData.stelle.trim(),
-        formData.bewerbungsart,
-        formData.jobPortal || "", // Optionales Feld
-        formData.datum || "", // Datum der Bewerbung
-        formData.status || 1, // Status aus formData übernehmen, Standardwert "1"
-        formData.datumRueckmeldung || "", // Datum Rückmeldung
-        "", // Datum der Nachfrage
-        formData.kontakt || "",
-        formData.email || "",
-        formData.telefon || "",
-        formData.loginInfo || "",
-        formData.datumGespräch || "", // Bewerbungsgespräch Datum
-        "", // Bewerbungsgespräch Ort
-        formData.link || "",
-        formData.kommentar || "",
-    ];
+  // Überprüfen, ob die Bewerbung bereits existiert (via BewerbungsID)
+  const existingRowIndex = data.slice(1).findIndex(row => row[0] === formData.applicationId);
 
-    if (existingRowIndex >= 0) {
-        // Aktualisiere bestehende Zeile
-        Logger.log("Bewerbung existiert bereits. Aktualisiere Zeile " + (existingRowIndex + 2));
-        sheet.getRange(existingRowIndex + 2, 1, 1, newRow.length).setValues([newRow]);
-        Logger.log("Aktualisierte Daten: " + JSON.stringify(newRow));
+  const newRow = [
+    formData.applicationId || Utilities.getUuid(), // BewerbungsID
+    formData.unternehmen.trim(),
+    formData.stelle.trim(),
+    formData.bewerbungsart,
+    formData.jobPortal || "", // Optionales Feld
+    formData.datum || "", // Datum der Bewerbung
+    formData.status || 1, // Status aus formData übernehmen, Standardwert "1"
+    formData.datumRueckmeldung || "", // Datum Rückmeldung
+    "", // Datum der Nachfrage
+    formData.kontakt || "",
+    formData.email || "",
+    formData.telefon || "",
+    formData.loginInfo || "",
+    formData.datumGespräch || "", // Bewerbungsgespräch Datum
+    "", // Bewerbungsgespräch Ort
+    formData.link || "",
+    formData.kommentar || "",
+  ];
+
+  if (existingRowIndex >= 0) {
+    // Aktualisiere bestehende Zeile
+    Logger.log("Bewerbung existiert bereits. Aktualisiere Zeile " + (existingRowIndex + 2));
+    sheet.getRange(existingRowIndex + 2, 1, 1, newRow.length).setValues([newRow]);
+    Logger.log("Aktualisierte Daten: " + JSON.stringify(newRow));
+  } else {
+    // Füge neue Zeile hinzu und erstelle einen Ordner
+    Logger.log("Bewerbung existiert nicht. Füge neue Zeile hinzu und erstelle Ordner.");
+    sheet.appendRow(newRow);
+    Logger.log("Hinzugefügte Daten: " + JSON.stringify(newRow));
+
+    // Ordner für das Unternehmen erstellen
+    const folderId = getConfigValue("FOLDER_ID");
+    const mainFolder = DriveApp.getFolderById(folderId);
+    const companyName = formData.unternehmen.trim();
+    let companyFolder = mainFolder.getFoldersByName(companyName);
+
+    if (companyFolder.hasNext()) {
+      companyFolder = companyFolder.next();
+      Logger.log(`Ordner für Unternehmen "${companyName}" existiert bereits.`);
     } else {
-        // Füge neue Zeile hinzu und erstelle einen Ordner
-        Logger.log("Bewerbung existiert nicht. Füge neue Zeile hinzu und erstelle Ordner.");
-        sheet.appendRow(newRow);
-        Logger.log("Hinzugefügte Daten: " + JSON.stringify(newRow));
-
-        // Ordner für das Unternehmen erstellen
-        const folderId = getConfigValue("FOLDER_ID");
-        const mainFolder = DriveApp.getFolderById(folderId);
-        const companyName = formData.unternehmen.trim();
-        let companyFolder = mainFolder.getFoldersByName(companyName);
-
-        if (companyFolder.hasNext()) {
-            companyFolder = companyFolder.next();
-            Logger.log(`Ordner für Unternehmen "${companyName}" existiert bereits.`);
-        } else {
-            companyFolder = mainFolder.createFolder(companyName);
-            Logger.log(`Neuer Ordner für Unternehmen "${companyName}" wurde erstellt.`);
-        }
+      companyFolder = mainFolder.createFolder(companyName);
+      Logger.log(`Neuer Ordner für Unternehmen "${companyName}" wurde erstellt.`);
     }
+  }
 }
 
 // Dummy_Data für die saveApplication
