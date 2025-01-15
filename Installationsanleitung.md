@@ -20,7 +20,7 @@ Version: 1.0 Autor: sIn
   git clone https://github.com/OnPlastic/Bewerbungstracker
   ```
 
-- Entpacke!!! das ZIP-Archiv, falls es heruntergeladen wurde.
+- Entpacke! das ZIP-Archiv, falls es heruntergeladen wurde.
 
 ---
 
@@ -62,7 +62,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
    - **Utils.js**
    - **Test.js**
 2. _*Wichtiger Hinweis:*_
-   - Die Dateien im Repository habend die Endung `.js`.
+   - Die Dateien im Repository haben die Endung `.js`.
    - Im Google Apps Skript Editor wird die Endung automatisch auf `.gs` geändert. Gebe beim Erstellen der Dateien daher nur den Namen an, z. B. `InitializeProject`, `Test`, `Utils`.
 
 #### 3.3 Füge im Google Apps Script-Editor unter **Dienste** folgende hinzu
@@ -133,7 +133,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 
 1. **Website bereitstellen**:
    - Gehe im Apps Script-Editor zu **"Bereitstellen"** > **"Neuebereitstellung"** Konfiguration - **Web-App**.
-   - Wähle bei "Wer hat Zugriff" die Option **"Nur ich slebst"**.  
+   - Wähle bei "Wer hat Zugriff" die Option **"Nur ich selbst"**.  
      (Hinweis: _Wenn du nur dich selbst autorisierst musst du im Browser mit deinem Google-Konto angemeldet sein._)
    - Notiere dir die bereitgestellte **URL**.
 2. **Daten eingeben**:
@@ -148,8 +148,8 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 ### 2. Automatische Nachverfolgung
 
 1. **Trigger einrichten**:
-   - Gehe zu "Seitenleiste" > **"Trigger"** im Apps Script-Projekt. (Uhren-Symbol)
-   - Lege einen Trigger für **`mainProcess()`** fest, **(täglich)** um die automatische Nachverfolgung zu starten.
+   - Gehe zur "Seitenleiste" im Apps Script-Projekt und wähle **"Trigger"** aus. (Uhren-Symbol)
+   - Lege einen Trigger für die **`mainProcess()`** fest, **(täglich)** um die automatische Nachverfolgung zu starten.
 2. Das Script erstellt basierend auf dem Bewerbungsstatus automatisch Aufgaben und E-Mails.
 
 ---

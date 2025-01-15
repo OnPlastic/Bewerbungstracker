@@ -76,7 +76,7 @@ Ein Tool, das den Bewerbungsprozess automatisiert und strukturiert. Es überwach
 
 ## Lizenz
 
-Dieses Projekt steht unter der **MIT-Lizenz**. Siehe die Datei **License** für weitere Details.
+Dieses Projekt steht unter der **MIT-Lizenz**. Siehe die Datei **License** für weitere Informationen.
 
 ---
 
