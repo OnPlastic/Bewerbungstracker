@@ -20,7 +20,7 @@ Version: 1.0 Autor: sIn
   git clone https://github.com/OnPlastic/Bewerbungstracker
   ```
 
-- Entpacke das ZIP-Archiv, falls es heruntergeladen wurde.
+- Entpacke!!! das ZIP-Archiv, falls es heruntergeladen wurde.
 
 ---
 
@@ -52,6 +52,8 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 1. Öffne [Google Apps Script](https://script.google.com/) und erstelle ein neues Projekt.
 2. Benenne das Projekt, z. B. **"Bewerbungstracker"**.
 
+![AppsScriptEditor-Fenster](BilderDoku/AppsScriptEditor.png "Benutzeroberfläche AppsScriptEditor")
+
 #### 3.2 Skriptdateien erstellen -> hochladen
 
 1. Erstelle leere Skriptdateien im Apps Script-Projekt und kopiere den Inhalt aus dem Repository:
@@ -69,6 +71,8 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 - `Gmail`-API
 - Google-`Sheets`API
 - Google- `Tasks`API
+
+![Dienste-API](BilderDoku/DiensteAPI.png "Dienst hinzufügen Dialog")
 
 #### 3.4 HTML-Formular hinzufügen
 
@@ -136,6 +140,8 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
    - Rufe die Website auf und trage die Bewerbungsdaten in die Eingabemaske ein oder bearbeite bereits vorhandene Bewerbungen. (Notiere eingehende Antworten, z. B. "Eingangsbestätigung -> setzte Status auf 2. Erklärung StatusNummern siehe **Bewerbungsprozess-Ablauf** im Repository) Bei Datumsänderungen direkt in der Tabelle, bitte dieses Format anwenden : `YYYY-MM-DD`.
 3. **Absenden**:
    - Klicke auf "Speichern", um die Daten im Google Sheet zu speichern und einen Firmenordner im Drive zu erstellen. _(Für weitere Bew.unterlagen)_
+  
+  ![Webformular.png](BilderDoku/Webformular.png "Ansicht Webformular")
 
 ---
 
