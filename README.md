@@ -70,6 +70,7 @@ Ein Tool, das den Bewerbungsprozess automatisiert und strukturiert. Es überwach
      - **5:** Erfolgreich.
      - **6:** Keine Reaktion.
      - **7:** Abgelehnt.
+     - **8:** Vorgemerkt
 
 ---
 
