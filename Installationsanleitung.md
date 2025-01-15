@@ -137,9 +137,9 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
      (Hinweis: _Wenn du nur dich selbst autorisierst musst du im Browser mit deinem Google-Konto angemeldet sein._)
    - Notiere dir die bereitgestellte **URL**.
 2. **Daten eingeben**:
-   - Rufe die Website auf und trage die Bewerbungsdaten in die Eingabemaske ein oder bearbeite bereits vorhandene Bewerbungen. (Notiere eingehende Antworten, z. B. "Eingangsbestätigung -> setzte Status auf 2. Erklärung StatusNummern siehe **Bewerbungsprozess-Ablauf** im Repository) Bei Datumsänderungen direkt in der Tabelle, bitte dieses Format anwenden : `YYYY-MM-DD`.
+   - Rufe die Website auf und trage die Bewerbungsdaten in die Eingabemaske ein oder bearbeite bereits vorhandene Bewerbungen. (Notiere eingehende Antworten, z. B. "Eingangsbestätigung -> setze Status auf 2. Erklärung StatusNummern siehe **Bewerbungsprozess-Ablauf** im Repository) Bei Datumsänderungen direkt in der Tabelle, bitte dieses Format anwenden : `YYYY-MM-DD`.
 3. **Absenden**:
-   - Klicke auf "Speichern", um die Daten im Google Sheet zu speichern und einen Firmenordner im Drive zu erstellen. _(Für weitere Bew.unterlagen)_
+   - Klicke auf "Speichern", um die Daten im Google Sheet zu speichern und einen Firmenordner im Drive zu erstellen. _(Für weitere Bewerbungsunterlagen)_
   
   ![Webformular.png](BilderDoku/Webformular.png "Ansicht Webformular")
 
@@ -180,7 +180,9 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 3. **Logger nutzen**:
    - Verwende `Fehlerbehebung` im Apps Script-Editor für Debugging.
 4. **API**-Dienste:
-   - Stelle sicher dass die API-Dienste korrekt eingerichtet sind und überprüfe ob alle erforderlichen Berechtigungen vorhanden sind.
+   - Stelle sicher, dass die API-Dienste korrekt eingerichtet sind und alle erforderlichen Berechtigungen vergeben sind.
+
+  ![Berechtigungen.png](BilderDoku/Berechtigungen.png "Berechtigungen")
 
 ---
 
