@@ -1,16 +1,15 @@
-//*****Script V:2.1-final A:sIn*****
+//*****Script V:3.0-final A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // - Testszenarien -
 // Test.gs
 
-
 /**
- * Testmodus zur Simulation des Bewerbungsablauf - Zeitraffer
+ * Testmodus zur Simulation des Bewerbungsablaufs - Zeitraffer
  */
 
 // Testmodus: Hier aktivieren oder deaktivieren
-const TEST_MODE = false; // flase/true
+const TEST_MODE = false; // false/true
 
 // Testdatum: Hier das simulierte Datum festlegen
 const TEST_DATE = new Date("2025-03-03");
@@ -23,23 +22,55 @@ function getToday() {
   return TEST_MODE ? TEST_DATE : new Date();
 }
 
+/**
+ * Überprüft, ob eine Ressource existiert, und gibt entsprechende Logs aus.
+ * @param {string} resourceId - Die ID der Ressource.
+ * @param {string} resourceName - Der Name der Ressource.
+ * @param {string} resourceType - Der Typ der Ressource (z. B. "Ordner", "Sheet").
+ * @returns {boolean} True, wenn die Ressource existiert, sonst False.
+ */
+function checkResourceExists(resourceId, resourceName, resourceType) {
+  try {
+    switch (resourceType) {
+      case "Folder":
+        const folder = DriveApp.getFolderById(resourceId);
+        Logger.log(
+          `[INFO] ${resourceType} "${resourceName}" existiert. ID: ${resourceId}`
+        );
+        return true;
+      case "Sheet":
+        const sheet = SpreadsheetApp.openById(resourceId);
+        Logger.log(
+          `[INFO] ${resourceType} "${resourceName}" existiert. ID: ${resourceId}`
+        );
+        return true;
+      case "TaskList":
+        const taskLists = Tasks.Tasklists.list().items || [];
+        if (taskLists.find((list) => list.id === resourceId)) {
+          Logger.log(
+            `[INFO] ${resourceType} "${resourceName}" existiert. ID: ${resourceId}`
+          );
+          return true;
+        }
+        break;
+      default:
+        Logger.log(`[ERROR] Unbekannter Ressourcentyp: ${resourceType}`);
+        return false;
+    }
+  } catch (error) {
+    Logger.log(
+      `[ERROR] ${resourceType} "${resourceName}" existiert nicht oder konnte nicht überprüft werden: ${error.message}`
+    );
+    return false;
+  }
+}
 
 /**
  * Testet, ob der Ordner "Bewerbungen" korrekt erstellt wurde.
  */
 function testBewerbungenFolder() {
   const folderId = getConfigValue("FOLDER_ID");
-  if (!folderId) {
-    Logger.log("Fehler: Ordner 'Bewerbungen' wurde nicht erstellt.");
-    return;
-  }
-
-  const folder = DriveApp.getFolderById(folderId);
-  if (folder) {
-    Logger.log(`Ordner 'Bewerbungen' existiert. ID: ${folderId}`);
-  } else {
-    Logger.log("Fehler: Ordner 'Bewerbungen' konnte nicht gefunden werden.");
-  }
+  checkResourceExists(folderId, "Bewerbungen", "Folder");
 }
 
 /**
@@ -48,52 +79,43 @@ function testBewerbungenFolder() {
  */
 function testBewerbungenSheet() {
   const sheetId = getConfigValue("SHEET_ID");
-  if (!sheetId) {
-    Logger.log("Fehler: Google Sheet wurde nicht erstellt.");
-    return;
-  }
+  if (!checkResourceExists(sheetId, "Bewerbungstracker", "Sheet")) return;
 
   const spreadsheet = SpreadsheetApp.openById(sheetId);
-  if (spreadsheet) {
-    const sheet = spreadsheet.getSheets()[0];
-    const columns = sheet
-      .getRange(1, 1, 1, sheet.getLastColumn())
-      .getValues()[0];
+  const sheet = spreadsheet.getSheets()[0];
+  const columns = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
 
-    const requiredColumns = [
-      "BewerbungsID",
-      "Unternehmen",
-      "Stelle",
-      "Art der Bewerbung",
-      "Job-Portal",
-      "Datum der Bewerbung",
-      "Status",
-      "Datum Rückmeldung",
-      "Datum der Nachfrage",
-      "Ansprechpartner",
-      "Email",
-      "Telefon",
-      "Login-Informationen",
-      "Bewerbungsgespräch Datum",
-      "Bewerbungsgespräch Ort",
-      "Stellenbeschreibung Link",
-      "Kommentar",
-    ];
+  const requiredColumns = [
+    "BewerbungsID",
+    "Unternehmen",
+    "Stelle",
+    "Art der Bewerbung",
+    "Job-Portal",
+    "Datum der Bewerbung",
+    "Status",
+    "Datum Rückmeldung",
+    "Datum der Nachfrage",
+    "Ansprechpartner",
+    "Email",
+    "Telefon",
+    "Login-Informationen",
+    "Bewerbungsgespräch Datum",
+    "Bewerbungsgespräch Ort",
+    "Stellenbeschreibung Link",
+    "Kommentar",
+  ];
 
-    const missingColumns = requiredColumns.filter(
-      (col) => !columns.includes(col)
+  const missingColumns = requiredColumns.filter(
+    (col) => !columns.includes(col)
+  );
+  if (missingColumns.length > 0) {
+    Logger.log(
+      `[ERROR] Fehlende Spalten im Google Sheet: ${missingColumns.join(", ")}`
     );
-    if (missingColumns.length > 0) {
-      Logger.log(
-        `Fehler: Fehlende Spalten im Google Sheet: ${missingColumns.join(", ")}`
-      );
-    } else {
-      Logger.log(
-        `Google Sheet existiert und enthält alle notwendigen Spalten. ID: ${sheetId}`
-      );
-    }
   } else {
-    Logger.log("Fehler: Google Sheet konnte nicht gefunden werden.");
+    Logger.log(
+      `[INFO] Google Sheet enthält alle notwendigen Spalten. ID: ${sheetId}`
+    );
   }
 }
 
@@ -102,18 +124,7 @@ function testBewerbungenSheet() {
  */
 function testTaskList() {
   const taskListId = getConfigValue("TASK_LIST_ID");
-  if (!taskListId) {
-    Logger.log("Fehler: Task-Liste wurde nicht erstellt.");
-    return;
-  }
-
-  const taskLists = Tasks.Tasklists.list().items;
-  const taskList = taskLists.find((list) => list.id === taskListId);
-  if (taskList) {
-    Logger.log(`Task-Liste existiert. ID: ${taskListId}`);
-  } else {
-    Logger.log("Fehler: Task-Liste konnte nicht gefunden werden.");
-  }
+  checkResourceExists(taskListId, "Bewerbungen", "TaskList");
 }
 
 /**
@@ -121,17 +132,7 @@ function testTaskList() {
  */
 function testTemplatesFolder() {
   const templatesFolderId = getConfigValue("TEMPLATES_FOLDER_ID");
-  if (!templatesFolderId) {
-    Logger.log("Fehler: Templates-Ordner wurde nicht erstellt.");
-    return;
-  }
-
-  const folder = DriveApp.getFolderById(templatesFolderId);
-  if (folder) {
-    Logger.log(`Templates-Ordner existiert. ID: ${templatesFolderId}`);
-  } else {
-    Logger.log("Fehler: Templates-Ordner konnte nicht gefunden werden.");
-  }
+  checkResourceExists(templatesFolderId, "Templates", "Folder");
 }
 
 /**
@@ -148,44 +149,9 @@ function testTemplateFiles() {
   requiredFiles.forEach((fileName) => {
     const file = folder.getFilesByName(fileName);
     if (file.hasNext()) {
-      Logger.log(`Template-Datei '${fileName}' existiert.`);
+      Logger.log(`[INFO] Template-Datei "${fileName}" existiert.`);
     } else {
-      Logger.log(
-        `Fehler: Template-Datei '${fileName}' konnte nicht gefunden werden.`
-      );
-    }
-  });
-}
-
-/**
- * Testet, ob die Config.js Datei korrekt erstellt wurde
- * und die erwarteten Schlüssel-Wert-Paare enthält.
- */
-function testConfigFile() {
-  const folderId = getConfigValue("FOLDER_ID");
-  const folder = DriveApp.getFolderById(folderId);
-  const configFile = folder.getFilesByName("Config.js");
-
-  if (!configFile.hasNext()) {
-    Logger.log("Fehler: Config.js Datei wurde nicht erstellt.");
-    return;
-  }
-
-  const content = configFile.next().getBlob().getDataAsString();
-  const requiredKeys = [
-    "FOLDER_ID",
-    "TEMPLATES_FOLDER_ID",
-    "SHEET_ID",
-    "TASK_LIST_ID",
-    "MEIN_NAME",
-    "MEINE_KONTAKTDATEN",
-  ];
-
-  requiredKeys.forEach((key) => {
-    if (!content.includes(`const ${key} =`)) {
-      Logger.log(`Fehler: Schlüssel '${key}' fehlt in der Config.js.`);
-    } else {
-      Logger.log(`Schlüssel '${key}' ist in der Config.js vorhanden.`);
+      Logger.log(`[ERROR] Template-Datei "${fileName}" fehlt.`);
     }
   });
 }
@@ -196,21 +162,21 @@ function testConfigFile() {
 function testCreateTask() {
   const taskListId = getConfigValue("TASK_LIST_ID");
   if (!taskListId) {
-    Logger.log("Fehler: Task-Liste wurde nicht gefunden.");
+    Logger.log("[ERROR] Task-Liste wurde nicht gefunden.");
     return;
   }
 
   const task = {
     title: "Test-Aufgabe für Bewerbungstracker",
     notes: "Dies ist eine automatisch erstellte Test-Aufgabe.",
-    due: new Date().toISOString(), // Setze das Fälligkeitsdatum auf heute
+    due: new Date().toISOString(),
   };
 
   try {
     const createdTask = Tasks.Tasks.insert(task, taskListId);
-    Logger.log(`Test-Aufgabe erstellt. ID: ${createdTask.id}`);
+    Logger.log(`[INFO] Test-Aufgabe erstellt. ID: ${createdTask.id}`);
   } catch (e) {
-    Logger.log(`Fehler beim Erstellen der Test-Aufgabe: ${e.message}`);
+    Logger.log(`[ERROR] Fehler beim Erstellen der Test-Aufgabe: ${e.message}`);
   }
 }
 
@@ -219,20 +185,12 @@ function testCreateTask() {
  */
 function testCreateEmail() {
   const templateFileName = "status1_first_request.txt";
-  const placeholderValues = {
-    BEWERBUNGSDATUM: "01.01.2025",
-    STELLE: "Teststelle",
-    UNTERNEHMEN: "Testunternehmen",
-    ANSPRECHPARTNER: "Herr Mustermann",
-    MEIN_NAME: "Max Mustermann",
-    MEINE_KONTAKTDATEN: "max.mustermann@example.com",
-  };
 
   try {
-    createTestEmailFromTemplate(templateFileName, placeholderValues);
-    Logger.log(`Test-E-Mail erfolgreich im Entwürfe-Ordner erstellt.`);
+    createTestEmailFromTemplate(templateFileName);
+    Logger.log(`[INFO] Test-E-Mail erfolgreich im Entwürfe-Ordner erstellt.`);
   } catch (e) {
-    Logger.log(`Fehler beim Erstellen der Test-E-Mail: ${e.message}`);
+    Logger.log(`[ERROR] Fehler beim Erstellen der Test-E-Mail: ${e.message}`);
   }
 }
 
@@ -251,7 +209,7 @@ function createTestEmailFromTemplate(templateFileName) {
 
   if (!file.hasNext()) {
     Logger.log(
-      `Fehler: Die Template-Datei '${templateFileName}' wurde im Ordner 'templates' nicht gefunden.`
+      `[ERROR] Die Template-Datei "${templateFileName}" wurde im Ordner "templates" nicht gefunden.`
     );
     return;
   }
@@ -285,7 +243,7 @@ function createTestEmailFromTemplate(templateFileName) {
   // E-Mail im Entwürfe-Ordner erstellen
   GmailApp.createDraft(recipientEmail, subject, body);
   Logger.log(
-    `Test-E-Mail mit Betreff "${subject}" wurde an "${recipientEmail}" im Entwürfe-Ordner erstellt.`
+    `[INFO] Test-E-Mail mit Betreff "${subject}" wurde an "${recipientEmail}" im Entwürfe-Ordner erstellt.`
   );
 }
 
@@ -293,7 +251,7 @@ function createTestEmailFromTemplate(templateFileName) {
  * Führt alle Tests aus.
  */
 function runAllTests() {
-  Logger.log("Starte Tests...");
+  Logger.log("[INFO] Starte Tests...");
   testBewerbungenFolder();
   testBewerbungenSheet();
   testTaskList();
@@ -301,35 +259,5 @@ function runAllTests() {
   testTemplateFiles();
   testCreateTask();
   testCreateEmail();
-  Logger.log("Tests abgeschlossen.");
+  Logger.log("[INFO] Tests abgeschlossen.");
 }
-
-
-
-// off Topic, Problem der Datums Zellen
-
-function testDateFormat(rowIndex, columnIndex) {
-  const sheetId = getConfigValue("SHEET_ID"); // Holt die ID aus der Konfiguration
-  const spreadsheet = SpreadsheetApp.openById(sheetId);
-  const sheet = spreadsheet.getSheetByName("Bewerbungstracker"); // Genaues Tabellenblatt
-
-  if (!sheet) {
-    throw new Error(`Das Tabellenblatt "Bewerbungstracker" existiert nicht.`);
-  }
-
-  const cell = sheet.getRange(rowIndex, columnIndex);
-
-  const rawValue = cell.getValue(); // Rohwert der Zelle
-  const displayedValue = cell.getDisplayValue(); // Angezeigter Wert der Zelle
-
-  Logger.log(`Rohwert: ${rawValue} (${typeof rawValue})`);
-  Logger.log(`Angezeigter Wert: ${displayedValue}`);
-
-  if (rawValue instanceof Date && !isNaN(rawValue.getTime())) {
-    Logger.log(`Google Sheets hat ein gültiges Datum erkannt: ${rawValue}`);
-  } else {
-    Logger.log("Google Sheets hat KEIN Datum erkannt.");
-  }
-}
-// Kommentar entfernen zum ausfürhren
-// testDateFormat(2, 8); // Zelle in Zeile 2, Spalte 8 prüfen

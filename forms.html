@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<!-- Skript Version:2.1-final A:sIn -->
+<!-- Skript Version:3.0 A:sIn -->
 <!-- Bewerbungstracker -->
 <!-- Eingabemaske für Bewerbungsinformationen -->
 <html>
   <head>
     <title>Bewerbungstracker - Neue Bewerbung</title>
     <style>
+      /* Standard-Darstellung für große Bildschirme */
       body {
         font-family: Arial, sans-serif;
         margin: 20px;
@@ -60,6 +61,7 @@
   </head>
   <body>
     <h1>Bewerbungstracker by s|n</h1>
+    <div class="clear"></div>
     <form id="bewerbungForm">
       <!-- Bewerbungsauswahl -->
       <label for="bewerbungsauswahl">Bewerbung auswählen</label>
@@ -82,13 +84,15 @@
           Übernehmen
         </button>
       </div>
-      <label for="neuebewerbung">Neue Bewerbung eintragen</label>
+      <label for="neuebewerbung" class="highlight-label"
+        >Neue Bewerbung eintragen</label
+      >
       <div
         style="
           width: 100%;
           height: 1px;
           background-color: #ccc;
-          margin-top: 10px;
+          margin-top: 20px;
         "
       ></div>
       <label for="unternehmen"
@@ -159,37 +163,42 @@
       <input type="hidden" id="applicationId" name="applicationId" />
     </form>
     <script>
+      // Debug-Modus aktivieren oder deaktivieren
+      const DEBUG_MODE = false; // Auf true setzen, um Debug-Logs zu aktivieren
+
       // Lade Bewerbungen ins Dropdown
       function loadApplications() {
-        // Rufe die Daten aus dem Apps Script ab
         google.script.run
           .withSuccessHandler(fillApplicationDropdown)
           .getAllApplications();
       }
+
       function fillApplicationDropdown(applications) {
         const dropdown = document.getElementById("bewerbungsauswahl");
         dropdown.innerHTML =
           '<option value="" selected disabled>Bitte auswählen...</option>'; // Dropdown zurücksetzen
 
-        // Füge die Optionen aus den Bewerbungsdaten hinzu
         applications.forEach((app) => {
           const option = document.createElement("option");
           option.value = app.id; // Speichere die BewerbungsID als Wert
-          option.textContent = `${app.firma} - ${app.stelle} (${app.ansprechpartner})`; // Zeige Firma, Stelle und Ansprechpartner
+          option.textContent = `${app.firma} - ${app.stelle} (${app.ansprechpartner})`;
           dropdown.appendChild(option);
         });
+
+        if (DEBUG_MODE) {
+          console.log("Debug - Bewerbungen geladen:", applications);
+        }
       }
 
       function applySelectedApplication() {
         const dropdown = document.getElementById("bewerbungsauswahl");
-        const applicationId = dropdown.value; // Hol die ID der ausgewählten Bewerbung
+        const applicationId = dropdown.value;
 
         if (!applicationId) {
           alert("Bitte wählen Sie eine Bewerbung aus.");
           return;
         }
 
-        // Rufe die Apps Script-Funktion auf und parse die Rückgabe
         google.script.run
           .withSuccessHandler((data) => {
             if (data) {
@@ -207,9 +216,11 @@
           alert("Bewerbung nicht gefunden.");
           return;
         }
-        console.log("Erhalte Daten:", data);
 
-        // Übertrage die Daten ins Formular
+        if (DEBUG_MODE) {
+          console.log("Debug - Erhalte Daten:", data);
+        }
+
         document.getElementById("unternehmen").value = data.firma || "";
         document.getElementById("stelle").value = data.stelle || "";
         document.getElementById("status").value = data.status || "1";
@@ -228,14 +239,19 @@
         document.getElementById("link").value = data.link || "";
         document.getElementById("kommentar").value = data.kommentar || "";
 
-        // **Hier wird die BewerbungsID ins versteckte Feld geschrieben**
         document.getElementById("applicationId").value = data.id || "";
 
-        console.log("Formular erfolgreich befüllt!");
-        console.log(
-          "Gesetzte ApplicationId:",
-          document.getElementById("applicationId").value
-        );
+        // Debug-Modus: Daten nach Übernahme loggen
+        if (DEBUG_MODE) {
+          console.log(
+            "[DEBUG] Übernommene Daten:",
+            JSON.stringify(data, null, 2)
+          );
+          console.log(
+            "[DEBUG] Eingestellte ApplicationId:",
+            document.getElementById("applicationId").value
+          );
+        }
 
         // Dropdown zurücksetzen
         document.getElementById("bewerbungsauswahl").value = "";
@@ -261,24 +277,21 @@
         formData.forEach((value, key) => {
           // Überprüfen, ob es sich um ein Datum handelt und nur das Datum extrahieren
           if (key === "datum" && !value) {
-            // Setze das aktuelle(simulierte) Datum, wenn kein Datum eingegeben wurde
+            // Setze das aktuelle (simulierte) Datum, wenn kein Datum eingegeben wurde
             data[key] = simulatedDate;
             datumField.value = simulatedDate; // Zeige das aktuelle Datum im Formular
           } else {
             data[key] = value.trim();
           }
-
-          // Log für applicationId
-          console.log("ApplicationId:", data["applicationId"]);
-
-          // Log-Ausgabe für jeden Wert
-          console.log(
-            `Key: ${key}, Value: ${value}, Gespeichert: ${data[key]}`
-          );
         });
 
-        // Finales Datenobjekt loggen
-        console.log("Gesammelte Daten:", JSON.stringify(data, null, 2));
+        // Debug-Modus: Gesammelte Formulardaten loggen
+        if (DEBUG_MODE) {
+          console.log(
+            "[DEBUG] Gesammelte Daten:",
+            JSON.stringify(data, null, 2)
+          );
+        }
 
         // Aufruf der Apps-Skript-Funktion
         google.script.run
@@ -296,7 +309,13 @@
       function clearForm() {
         document.getElementById("bewerbungForm").reset(); // Setzt das Formular zurück
         document.getElementById("errorUnternehmen").textContent = ""; // Entfernt mögliche Fehlermeldungen
+
+        // Debug-Modus: Formular-Reset loggen
+        if (DEBUG_MODE) {
+          console.log("[DEBUG] Formular wurde zurückgesetzt.");
+        }
       }
+
       // Rufe die Funktion beim Laden der Seite auf
       window.onload = loadApplications;
     </script>

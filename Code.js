@@ -1,4 +1,4 @@
-//*****Script V:2.1-final A:sIn*****
+//*****Script V:3.0 A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // Code.gs
@@ -35,7 +35,7 @@ function mainProcess() {
 
   const data = sheet.getDataRange().getValues();
   data.forEach((row, index) => {
-    if (index === 0) return; // Überspringe die Kopfzeile
+    if (index === 0) return;
 
     processApplication(row, index, sheet);
   });
@@ -47,7 +47,8 @@ function mainProcess() {
  * @returns {GoogleAppsScript.HTML.HtmlOutput} Die HTML-Seite.
  */
 function doGet(e) {
-  const testDate = getToday().toISOString().split("T")[0]; // Simuliertes Datum aus dem Testmode falls, gesetzt
+  // Simuliertes Datum aus dem Testmode falls, gesetzt
+  const testDate = getToday().toISOString().split("T")[0];
   return HtmlService.createHtmlOutputFromFile("forms.html")
     .append(`<script>var simulatedDate = "${testDate}";</script>`)
     .setTitle("Bewerbungstracker")
@@ -62,9 +63,8 @@ function doGet(e) {
  * @param {number} index - Der Index der Zeile in der Tabelle.
  * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - Das Google Sheet-Objekt.
  */
-
 function processApplication(row, index, sheet) {
-  const status = row[STATUS_COLUMN_INDEX]; // Spalte mit dem Status
+  const status = row[STATUS_COLUMN_INDEX];
   const statusHandlers = {
     1: handleStatus1,
     2: handleStatus2,
@@ -86,7 +86,6 @@ function processApplication(row, index, sheet) {
  * @param {number} index - Der Index der Zeile in der Tabelle.
  * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet - Das Google Sheet-Objekt.
  */
-
 // Status 1: Beworben
 function handleStatus1(row, index, sheet) {
   const dateSubmitted = new Date(row[DATE_SUBMITTED_COLUMN_INDEX]);
@@ -108,18 +107,19 @@ function handleStatus1(row, index, sheet) {
     ),
     DATUM_DER_NACHFRAGE: row[SECOND_FOLLOWUP_COLUMN_INDEX]
       ? Utilities.formatDate(
-        new Date(row[SECOND_FOLLOWUP_COLUMN_INDEX]),
-        Session.getScriptTimeZone(),
-        "dd.MM.yyyy"
-      )
-      : "kein Datum", // Fallback, falls das Feld leer ist  
+          new Date(row[SECOND_FOLLOWUP_COLUMN_INDEX]),
+          Session.getScriptTimeZone(),
+          "dd.MM.yyyy"
+        )
+      : "kein Datum",
     STELLE: row[JOB_DESCRIPTION_COLUMN_INDEX],
     UNTERNEHMEN: row[COMPANY_COLUMN_INDEX],
     MEIN_NAME: getConfigValue("MEIN_NAME"),
     MEINE_KONTAKTDATEN: getConfigValue("MEINE_KONTAKTDATEN"),
   };
 
-  const recipientEmail = row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@exampel.com";
+  const recipientEmail =
+    row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@exampel.com";
 
   const actions = {
     // Nach 14 Tagen Eingangsbestätigung nachfragen
@@ -154,9 +154,9 @@ function handleStatus1(row, index, sheet) {
         SECOND_FOLLOWUP_COLUMN_INDEX
       );
     },
-    // Nach insgesamt 38 Tagen ohne Antwort, auf "Status 6: - Keine Reaktion" setzen
     38: () => {
-      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
+      // Status auf "Keine Reaktion" setzen
+      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6);
       createTask(
         "Auf Status 6: gesetzt",
         row,
@@ -167,7 +167,6 @@ function handleStatus1(row, index, sheet) {
     },
   };
 
-  // Führe die Aktion aus, wenn die Bedingung erfüllt ist
   if (actions[daysSinceSubmission]) {
     actions[daysSinceSubmission]();
   }
@@ -175,17 +174,17 @@ function handleStatus1(row, index, sheet) {
 
 // Status 2: Eingang bestätigt
 function handleStatus2(row, index, sheet) {
-  // Validierung für Status 2
-  const rawDateResponse = row[DATE_RESPONSE_COLUMN_INDEX]; // Rohwert aus der Tabelle
-  const parsedDateResponse = rawDateResponse
-    ? new Date(rawDateResponse)
-    : null;
+  // Validierung für Status 2, Rohwert aus Tabelle
+  const rawDateResponse = row[DATE_RESPONSE_COLUMN_INDEX];
+  const parsedDateResponse = rawDateResponse ? new Date(rawDateResponse) : null;
 
   if (!parsedDateResponse || isNaN(parsedDateResponse.getTime())) {
     Logger.log(
-      `Fehler in Zeile ${index + 1}: Ungültiges Datum oder falsches Format in Spalte "Datum Rückmeldung". Erwartet wird das Format YYYY-MM-DD.`
+      `Fehler in Zeile ${
+        index + 1
+      }: Ungültiges Datum oder falsches Format in Spalte "Datum Rückmeldung". Erwartet wird das Format YYYY-MM-DD.`
     );
-    return; // Überspringe die Verarbeitung dieser Zeile
+    return;
   }
 
   const today = getToday();
@@ -207,11 +206,11 @@ function handleStatus2(row, index, sheet) {
     ),
     DATUM_DER_NACHFRAGE: row[SECOND_FOLLOWUP_COLUMN_INDEX]
       ? Utilities.formatDate(
-        new Date(row[SECOND_FOLLOWUP_COLUMN_INDEX]),
-        Session.getScriptTimeZone(),
-        "dd.MM.yyyy"
-      )
-      : "kein Datum", // Fallback, falls das Feld leer ist
+          new Date(row[SECOND_FOLLOWUP_COLUMN_INDEX]),
+          Session.getScriptTimeZone(),
+          "dd.MM.yyyy"
+        )
+      : "kein Datum",
     STELLE: row[JOB_DESCRIPTION_COLUMN_INDEX],
     UNTERNEHMEN: row[COMPANY_COLUMN_INDEX],
     ANSPRECHPARTNER: row[CONTACT_PERSON_COLUMN_INDEX],
@@ -219,7 +218,8 @@ function handleStatus2(row, index, sheet) {
     MEINE_KONTAKTDATEN: getConfigValue("MEINE_KONTAKTDATEN"),
   };
 
-  const recipientEmail = row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
+  const recipientEmail =
+    row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
 
   const actions = {
     25: () => {
@@ -253,7 +253,8 @@ function handleStatus2(row, index, sheet) {
       );
     },
     49: () => {
-      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
+      // Status auf "Keine Reaktion" setzen
+      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6);
       createTask(
         "Auf Status 6: gesetzt",
         row,
@@ -264,7 +265,6 @@ function handleStatus2(row, index, sheet) {
     },
   };
 
-  // Führe die Aktion aus, wenn die Bedingung erfüllt ist
   if (actions[daysSinceResponse]) {
     actions[daysSinceResponse]();
   }
@@ -274,7 +274,7 @@ function handleStatus2(row, index, sheet) {
 function handleStatus3(row, index, sheet) {
   const dateResponse = row[DATE_RESPONSE_COLUMN_INDEX]
     ? new Date(row[DATE_RESPONSE_COLUMN_INDEX])
-    : new Date(row[DATE_SUBMITTED_COLUMN_INDEX]); // Fallback auf Bewerbungseingang
+    : new Date(row[DATE_SUBMITTED_COLUMN_INDEX]);
   const today = getToday();
 
   const daysSinceResponse = Math.floor(
@@ -294,11 +294,11 @@ function handleStatus3(row, index, sheet) {
     ),
     DATUM_DER_NACHFRAGE: row[SECOND_FOLLOWUP_COLUMN_INDEX]
       ? Utilities.formatDate(
-        new Date(row[SECOND_FOLLOWUP_COLUMN_INDEX]),
-        Session.getScriptTimeZone(),
-        "dd.MM.yyyy"
-      )
-      : "kein Datum", // Fallback, falls das Feld leer ist  
+          new Date(row[SECOND_FOLLOWUP_COLUMN_INDEX]),
+          Session.getScriptTimeZone(),
+          "dd.MM.yyyy"
+        )
+      : "kein Datum",
     STELLE: row[JOB_DESCRIPTION_COLUMN_INDEX],
     UNTERNEHMEN: row[COMPANY_COLUMN_INDEX],
     ANSPRECHPARTNER: row[CONTACT_PERSON_COLUMN_INDEX],
@@ -306,7 +306,8 @@ function handleStatus3(row, index, sheet) {
     MEINE_KONTAKTDATEN: getConfigValue("MEINE_KONTAKTDATEN"),
   };
 
-  const recipientEmail = row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
+  const recipientEmail =
+    row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
 
   const actions = {
     25: () => {
@@ -325,7 +326,8 @@ function handleStatus3(row, index, sheet) {
       );
     },
     39: () => {
-      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
+      // Status auf "Keine Reaktion" setzen
+      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6);
       createTask(
         "Auf Status 6: gesetzt",
         row,
@@ -336,7 +338,6 @@ function handleStatus3(row, index, sheet) {
     },
   };
 
-  // Führe die Aktion aus, wenn die Bedingung erfüllt ist
   if (actions[daysSinceResponse]) {
     actions[daysSinceResponse]();
   }
@@ -344,7 +345,7 @@ function handleStatus3(row, index, sheet) {
 
 // Status 4: Einladung Bewerbungsgespräch
 function handleStatus4(row, index, sheet) {
-  const interviewDate = new Date(row[INTERVIEW_DATE_COLUMN_INDEX]); // Datum des Bewerbungsgesprächs
+  const interviewDate = new Date(row[INTERVIEW_DATE_COLUMN_INDEX]);
   const today = getToday();
 
   const daysSinceInterview = Math.floor(
@@ -364,7 +365,8 @@ function handleStatus4(row, index, sheet) {
     MEINE_KONTAKTDATEN: getConfigValue("MEINE_KONTAKTDATEN"),
   };
 
-  const recipientEmail = row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
+  const recipientEmail =
+    row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
 
   const actions = {
     20: () => {
@@ -383,7 +385,8 @@ function handleStatus4(row, index, sheet) {
       );
     },
     34: () => {
-      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6); // Status auf "Keine Reaktion" setzen
+      // Status auf "Keine Reaktion" setzen
+      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6);
       createTask(
         "Auf Status 6: gesetzt",
         row,
@@ -394,13 +397,10 @@ function handleStatus4(row, index, sheet) {
     },
   };
 
-  // Führe die Aktion aus, wenn die Bedingung erfüllt ist
   if (actions[daysSinceInterview]) {
     actions[daysSinceInterview]();
   }
 }
-
-
 
 // Status 6: Keine Reaktion
 function handleStatus6(row, index, sheet) {
@@ -411,8 +411,8 @@ function handleStatus6(row, index, sheet) {
   );
 
   const actions = {
-    // Erstelle einen Task, dass die Bewerbung auf Status 7 (erfolglos) gesetzt wurde
     90: () => {
+      // Erstelle einen Task Bewerbung auf "Status 7: - erfolglos", gesetzt
       createTask(
         "Bewerbung erfolglos",
         row,
@@ -420,11 +420,11 @@ function handleStatus6(row, index, sheet) {
         index,
         FIRST_FOLLOWUP_COLUMN_INDEX
       );
-      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(7); // Status auf "erfolglos" setzen
+      // Auf "Status 7: - erfolglos" setzen
+      sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(7);
     },
   };
 
-  // Führe die Aktion aus, wenn die Bedingung erfüllt ist
   if (actions[daysSinceFollowUp]) {
     actions[daysSinceFollowUp]();
   }
@@ -432,7 +432,7 @@ function handleStatus6(row, index, sheet) {
 
 // Status 7: Abgelehnt
 function handleStatus7(row, index, sheet) {
-  // Bewerbung ist endgültig abgelehnt, keine weiteren Schritte erforderlich.
+  // Status 7: Abgelehnt (keine weiteren Aktionen erforderlich)
 }
 
 /**
@@ -442,48 +442,56 @@ function handleStatus7(row, index, sheet) {
  * @param {Object} formData - Die übermittelten Formulardaten.
  */
 function saveApplication(formData) {
-
   const sheetId = getConfigValue("SHEET_ID");
-  const sheet = SpreadsheetApp.openById(sheetId).getSheetByName("Bewerbungstracker");
+  const sheet =
+    SpreadsheetApp.openById(sheetId).getSheetByName("Bewerbungstracker");
   const data = sheet.getDataRange().getValues();
 
   // Log Formulardaten
-  Logger.log("Erhaltene Formulardaten: " + JSON.stringify(formData));
+  Logger.log("[DEBUG] Erhaltene Formulardaten: " + JSON.stringify(formData));
 
   // Überprüfen, ob die Bewerbung bereits existiert (via BewerbungsID)
-  const existingRowIndex = data.slice(1).findIndex(row => row[0] === formData.applicationId);
+  const existingRowIndex = data
+    .slice(1)
+    .findIndex((row) => row[0] === formData.applicationId);
 
   const newRow = [
     formData.applicationId || Utilities.getUuid(), // BewerbungsID
-    formData.unternehmen.trim(),
-    formData.stelle.trim(),
-    formData.bewerbungsart,
+    formData.unternehmen.trim(), // Unternehmen
+    formData.stelle.trim(), // Stelle
+    formData.bewerbungsart, // Bewerbungsart
     formData.jobPortal || "", // Optionales Feld
     formData.datum || "", // Datum der Bewerbung
     formData.status || 1, // Status aus formData übernehmen, Standardwert "1"
     formData.datumRueckmeldung || "", // Datum Rückmeldung
     "", // Datum der Nachfrage
-    formData.kontakt || "",
-    formData.email || "",
-    formData.telefon || "",
-    formData.loginInfo || "",
+    formData.kontakt || "", // Kontakt
+    formData.email || "", // E-Mail
+    formData.telefon || "", // Telefon
+    formData.loginInfo || "", // Login-Information
     formData.datumGespräch || "", // Bewerbungsgespräch Datum
     "", // Bewerbungsgespräch Ort
-    formData.link || "",
-    formData.kommentar || "",
+    formData.link || "", // Link Stellenbeschreibung
+    formData.kommentar || "", // Kommentar
   ];
 
   if (existingRowIndex >= 0) {
     // Aktualisiere bestehende Zeile
-    Logger.log("Bewerbung existiert bereits. Aktualisiere Zeile " + (existingRowIndex + 2));
-    sheet.getRange(existingRowIndex + 2, 1, 1, newRow.length).setValues([newRow]);
-    Logger.log("Aktualisierte Daten: " + JSON.stringify(newRow));
+    Logger.log(
+      `[INFO] Aktualisiere bestehende Bewerbung in Zeile ${
+        existingRowIndex + 2
+      }.`
+    );
+    sheet
+      .getRange(existingRowIndex + 2, 1, 1, newRow.length)
+      .setValues([newRow]);
+    Logger.log("[DEBUG] Aktualisierte Daten: " + JSON.stringify(newRow));
   } else {
     // Füge neue Zeile hinzu und erstelle einen Ordner
-    Logger.log("Bewerbung existiert nicht. Füge neue Zeile hinzu und erstelle Ordner.");
+    Logger.log(
+      "[INFO] Neue Bewerbung wird hinzugefügt und ein Ordner erstellt."
+    );
     sheet.appendRow(newRow);
-    Logger.log("Hinzugefügte Daten: " + JSON.stringify(newRow));
-
     // Ordner für das Unternehmen erstellen
     const folderId = getConfigValue("FOLDER_ID");
     const mainFolder = DriveApp.getFolderById(folderId);
@@ -492,10 +500,11 @@ function saveApplication(formData) {
 
     if (companyFolder.hasNext()) {
       companyFolder = companyFolder.next();
-      Logger.log(`Ordner für Unternehmen "${companyName}" existiert bereits.`);
     } else {
       companyFolder = mainFolder.createFolder(companyName);
-      Logger.log(`Neuer Ordner für Unternehmen "${companyName}" wurde erstellt.`);
+      Logger.log(
+        `[INFO] Neuer Ordner für Unternehmen "${companyName}" wurde erstellt.`
+      );
     }
   }
 }

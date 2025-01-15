@@ -8,8 +8,16 @@
     "Konsolenausgabe",
     "kontakt",
     "Nachfassaktionen",
+    "Platzhalterwerte",
     "Skriptdateien",
+    "Taskliste",
     "telefon",
     "zeitbasierten"
-  ]
+  ],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true, // Automatisches Formatieren beim Speichern
+  "editor.rulers": [80],
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  } // Zeigt eine vertikale Linie bei 80 Zeichen
 }
