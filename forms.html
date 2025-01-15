@@ -61,16 +61,36 @@
   <body>
     <h1>Bewerbungstracker by s|n</h1>
     <form id="bewerbungForm">
-    <!-- Bewerbungsauswahl -->
-    <label for="bewerbungsauswahl">Bewerbung auswählen</label>
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 25px;">
-    <select id="bewerbungsauswahl" name="bewerbungsauswahl">
-      <option value="" selected disabled>Bitte auswählen...</option>
-    </select>
-      <button type="button" onclick="applySelectedApplication()" style="margin-top: 5px; ">Übernehmen</button>
-    </div>
-      <label for="neuebewerbung">Neue Bewerubng eintragen</label>
-      <div style="width: 100%; height: 1px; background-color: #ccc; margin-top: 10px;"></div>
+      <!-- Bewerbungsauswahl -->
+      <label for="bewerbungsauswahl">Bewerbung auswählen</label>
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 25px;
+        "
+      >
+        <select id="bewerbungsauswahl" name="bewerbungsauswahl">
+          <option value="" selected disabled>Bitte auswählen...</option>
+        </select>
+        <button
+          type="button"
+          onclick="applySelectedApplication()"
+          style="margin-top: 5px"
+        >
+          Übernehmen
+        </button>
+      </div>
+      <label for="neuebewerbung">Neue Bewerbung eintragen</label>
+      <div
+        style="
+          width: 100%;
+          height: 1px;
+          background-color: #ccc;
+          margin-top: 10px;
+        "
+      ></div>
       <label for="unternehmen"
         >Unternehmen <span class="error" id="errorUnternehmen"></span
       ></label>
@@ -101,19 +121,19 @@
       <label for="jobPortal">Job-Portal</label>
       <input type="text" id="jobPortal" name="jobPortal" />
 
-      <label for="loginInfo">Logininformationen</label>
+      <label for="loginInfo">Login Informationen</label>
       <textarea id="loginInfo" name="loginInfo"></textarea>
 
-      <div style="display: flex; gap: 10px; align-items: center;">
-        <div style="flex: 1;">
+      <div style="display: flex; gap: 10px; align-items: center">
+        <div style="flex: 1">
           <label for="datum">Datum der Bewerbung</label>
           <input type="date" id="datum" name="datum" />
         </div>
-        <div style="flex: 1;">
+        <div style="flex: 1">
           <label for="datumRueckmeldung">Datum Rückmeldung</label>
           <input type="date" id="datumRueckmeldung" name="datumRueckmeldung" />
         </div>
-        <div style="flex: 1;">
+        <div style="flex: 1">
           <label for="datumGespräch">Bewerbungsgespräch</label>
           <input type="date" id="datumGespräch" name="datumGespräch" />
         </div>
@@ -142,21 +162,23 @@
       // Lade Bewerbungen ins Dropdown
       function loadApplications() {
         // Rufe die Daten aus dem Apps Script ab
-        google.script.run.withSuccessHandler(fillApplicationDropdown).getAllApplications();
+        google.script.run
+          .withSuccessHandler(fillApplicationDropdown)
+          .getAllApplications();
       }
       function fillApplicationDropdown(applications) {
         const dropdown = document.getElementById("bewerbungsauswahl");
-        dropdown.innerHTML = '<option value="" selected disabled>Bitte auswählen...</option>'; // Dropdown zurücksetzen
+        dropdown.innerHTML =
+          '<option value="" selected disabled>Bitte auswählen...</option>'; // Dropdown zurücksetzen
 
         // Füge die Optionen aus den Bewerbungsdaten hinzu
-        applications.forEach(app => {
+        applications.forEach((app) => {
           const option = document.createElement("option");
           option.value = app.id; // Speichere die BewerbungsID als Wert
           option.textContent = `${app.firma} - ${app.stelle} (${app.ansprechpartner})`; // Zeige Firma, Stelle und Ansprechpartner
           dropdown.appendChild(option);
         });
       }
-
 
       function applySelectedApplication() {
         const dropdown = document.getElementById("bewerbungsauswahl");
@@ -169,12 +191,12 @@
 
         // Rufe die Apps Script-Funktion auf und parse die Rückgabe
         google.script.run
-          .withSuccessHandler(data => {
+          .withSuccessHandler((data) => {
             if (data) {
               const parsedData = JSON.parse(data);
               fillForm(parsedData);
             } else {
-              alert("Bewerbung nicht gefunden.")
+              alert("Bewerbung nicht gefunden.");
             }
           })
           .getApplicationDetailsById(applicationId);
@@ -186,16 +208,19 @@
           return;
         }
         console.log("Erhalte Daten:", data);
-        
+
         // Übertrage die Daten ins Formular
         document.getElementById("unternehmen").value = data.firma || "";
         document.getElementById("stelle").value = data.stelle || "";
         document.getElementById("status").value = data.status || "1";
-        document.getElementById("bewerbungsart").value = data.bewerbungsart || "Online";
+        document.getElementById("bewerbungsart").value =
+          data.bewerbungsart || "Online";
         document.getElementById("jobPortal").value = data.jobPortal || "";
         document.getElementById("datum").value = data.datum || "";
-        document.getElementById("datumRueckmeldung").value = data.datumRueckmeldung || "";
-        document.getElementById("datumGespräch").value = data.datumGespräch || "";
+        document.getElementById("datumRueckmeldung").value =
+          data.datumRueckmeldung || "";
+        document.getElementById("datumGespräch").value =
+          data.datumGespräch || "";
         document.getElementById("kontakt").value = data.ansprechpartner || "";
         document.getElementById("email").value = data.email || "";
         document.getElementById("telefon").value = data.telefon || "";
@@ -206,14 +231,16 @@
         // **Hier wird die BewerbungsID ins versteckte Feld geschrieben**
         document.getElementById("applicationId").value = data.id || "";
 
-        console.log("Fromular erfolgreich befüllt!");
-        console.log("Gesetzte ApplicationId:", document.getElementById("applicationId").value);
-        
+        console.log("Formular erfolgreich befüllt!");
+        console.log(
+          "Gesetzte ApplicationId:",
+          document.getElementById("applicationId").value
+        );
+
         // Dropdown zurücksetzen
         document.getElementById("bewerbungsauswahl").value = "";
       }
 
-      
       function submitForm() {
         const errorElement = document.getElementById("errorUnternehmen");
         const unternehmen = document.getElementById("unternehmen").value.trim();
@@ -235,7 +262,7 @@
           // Überprüfen, ob es sich um ein Datum handelt und nur das Datum extrahieren
           if (key === "datum" && !value) {
             // Setze das aktuelle(simulierte) Datum, wenn kein Datum eingegeben wurde
-            data[key] = simulatedDate; 
+            data[key] = simulatedDate;
             datumField.value = simulatedDate; // Zeige das aktuelle Datum im Formular
           } else {
             data[key] = value.trim();
@@ -245,7 +272,9 @@
           console.log("ApplicationId:", data["applicationId"]);
 
           // Log-Ausgabe für jeden Wert
-          console.log(`Key: ${key}, Value: ${value}, Gespeichert: ${data[key]}`)
+          console.log(
+            `Key: ${key}, Value: ${value}, Gespeichert: ${data[key]}`
+          );
         });
 
         // Finales Datenobjekt loggen
@@ -270,9 +299,6 @@
       }
       // Rufe die Funktion beim Laden der Seite auf
       window.onload = loadApplications;
-      
-      </script>
+    </script>
   </body>
 </html>
-
-
