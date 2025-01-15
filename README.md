@@ -12,7 +12,7 @@ Ein Tool, das den Bewerbungsprozess automatisiert und strukturiert. Es überwach
 - **Statusüberwachung:** Verarbeitet Bewerbungen basierend auf verschiedenen Status und Fristen.
 - **Einfache Tests:** Testfunktionen zur Überprüfung einzelner Komponenten.
 
-![Webformular](.BilderDoku/Webformular.png "Eingabemaske-Bewerbungstracker")
+![Webformular](./BilderDoku/Webformular.png "Eingabemaske-Bewerbungstracker")
 
 ---
 
