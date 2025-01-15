@@ -63,7 +63,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
    - Die Dateien im Repository habend die Endung `.js`.
    - Im Google Apps Skript Editor wird die Endung automatisch auf `.gs` geändert. Gebe beim Erstellen der Dateien daher nur den Namen an, z. B. `InitializeProject`, `Test`, `Utils`.
 
-#### 3.3 Füge im Google Apps Script-Editor unter **Dienste** folgende hinzu:
+#### 3.3 Füge im Google Apps Script-Editor unter **Dienste** folgende hinzu
 
 - Google-`Drive`-API
 - `Gmail`-API
@@ -128,12 +128,12 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 ### 1. Eingabemaske verwenden
 
 1. **Website bereitstellen**:
-   - Gehe im Apps Script-Editor zu **"Veröffentlichen"** > **"Web-App bereitstellen"**.
+   - Gehe im Apps Script-Editor zu **"Bereitstellen"** > **"Neuebereitstellung"** Konfiguration - **Web-App**.
    - Wähle bei "Wer hat Zugriff" die Option **"Nur ich slebst"**.  
      (Hinweis: _Wenn du nur dich selbst autorisierst musst du im Browser mit deinem Google-Konto angemeldet sein._)
    - Notiere dir die bereitgestellte **URL**.
 2. **Daten eingeben**:
-   - Rufe die Website auf und trage die Bewerbungsdaten in die Eingabemaske ein. Bei Datumsänderungen direkt in der Tabelle, bitte dieses Format anwenden : `YYYY-MM-DD`.
+   - Rufe die Website auf und trage die Bewerbungsdaten in die Eingabemaske ein oder bearbeite bereits vorhandene Bewerbungen. (Notiere eingehende Antworten, z. B. "Eingangsbestätigung -> setzte Status auf 2. Erklärung StatusNummern siehe **Bewerbungsprozess-Ablauf** im Repository) Bei Datumsänderungen direkt in der Tabelle, bitte dieses Format anwenden : `YYYY-MM-DD`.
 3. **Absenden**:
    - Klicke auf "Speichern", um die Daten im Google Sheet zu speichern und einen Firmenordner im Drive zu erstellen. _(Für weitere Bew.unterlagen)_
 
@@ -142,8 +142,8 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 ### 2. Automatische Nachverfolgung
 
 1. **Trigger einrichten**:
-   - Gehe zu "Seitenleist" > **"Trigger"** im Apps Script-Projekt. (Uhren-Symbol)
-   - Lege einen Trigger für **`mainProcess()`** fest, z. B. **täglich**.
+   - Gehe zu "Seitenleiste" > **"Trigger"** im Apps Script-Projekt. (Uhren-Symbol)
+   - Lege einen Trigger für **`mainProcess()`** fest, **(täglich)** um die automatische Nachverfolgung zu starten.
 2. Das Script erstellt basierend auf dem Bewerbungsstatus automatisch Aufgaben und E-Mails.
 
 ---
@@ -161,7 +161,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 - **E-Mail-Templates**:
   - Bearbeite die Dateien im Ordner **"templates"**, um die Inhalte nach deinen Bedürfnissen anzupassen.
 - **Trigger-Zeiten**:
-  - Passe die zeitbasierten Trigger im Apps Script-Projekt an (z. B. wöchentlich statt täglich).
+  - Passe die zeitbasierten Trigger im Apps Script-Projekt an (z. B. 7:00-8:00 Uhr).
 
 ---
 
@@ -170,7 +170,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 1. **Fehlender Zugriff**:
    - Stelle sicher, dass die Web-App und das Script die erforderlichen Berechtigungen haben (Google Drive, Gmail, Tasks).
 2. **Templates fehlen**:
-   - Überprüfe, ob alle Template-Dateien im Ordner **"templates"** vorhanden sind.
+   - Überprüfe, ob alle Template-Dateien im Ordner **"templates"** vorhanden und nicht leer sind.
 3. **Logger nutzen**:
    - Verwende `Fehlerbehebung` im Apps Script-Editor für Debugging.
 
