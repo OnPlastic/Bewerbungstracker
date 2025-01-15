@@ -173,6 +173,8 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
    - Überprüfe, ob alle Template-Dateien im Ordner **"templates"** vorhanden und nicht leer sind.
 3. **Logger nutzen**:
    - Verwende `Fehlerbehebung` im Apps Script-Editor für Debugging.
+4. **API**-Dienste:
+   - Stelle sicher dass die API-Dienste korrekt eingerichtet sind und überprüfe ob alle erforderlichen Berechtigungen vorhanden sind.
 
 ---
 
