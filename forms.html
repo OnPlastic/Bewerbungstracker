@@ -298,7 +298,7 @@
           .withSuccessHandler(() => {
             alert("Bewerbung erfolgreich gespeichert!");
             clearForm(); // Formularfelder leeren
-            location.reload(); // Seite neu laden
+            reloadPage(); // Nach Abschluss des Speicherns Seite neu laden
           })
           .withFailureHandler((error) =>
             alert("Fehler: " + JSON.stringify(error))
@@ -315,6 +315,11 @@
         if (DEBUG_MODE) {
           console.log("[DEBUG] Formular wurde zurückgesetzt.");
         }
+      }
+
+      //Funktion zum Neuladen der Seite
+      function reloadPage() {
+        google.script.run.doGet(); 
       }
 
       // Rufe die Funktion beim Laden der Seite auf
