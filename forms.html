@@ -298,6 +298,7 @@
           .withSuccessHandler(() => {
             alert("Bewerbung erfolgreich gespeichert!");
             clearForm(); // Formularfelder leeren
+            location.reload(); // Seite neu laden
           })
           .withFailureHandler((error) =>
             alert("Fehler: " + JSON.stringify(error))
