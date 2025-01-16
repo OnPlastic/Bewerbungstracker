@@ -3,10 +3,12 @@
     "bewerbung",
     "Bewerbungs",
     "Bewerbungstracker",
+    "gespräch",
     "Gmail",
     "kommentar",
     "Konsolenausgabe",
     "kontakt",
+    "Nachfass",
     "Nachfassaktionen",
     "Platzhalterwerte",
     "Skriptdateien",
@@ -16,7 +18,9 @@
   ],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true, // Automatisches Formatieren beim Speichern
-  "editor.rulers": [80],
+  "editor.rulers": [
+    80
+  ],
   "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   } // Zeigt eine vertikale Linie bei 80 Zeichen

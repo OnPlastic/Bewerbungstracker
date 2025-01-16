@@ -22,14 +22,14 @@
   1. Warte **14 Tage**.
   2. Falls keine Eingangsbestätigung vorliegt:
      - Erstelle eine Nachfass-Aufgabe: „Eingangsbestätigung nachfragen“.
-  3. Warte weitere **10 Tage**.
+  3. Warte weitere **14 Tage**.
   4. Falls weiterhin keine Eingangsbestätigung vorliegt:
      - Erstelle eine Nachfass-Aufgabe: „Erneut Eingangsbestätigung nachfragen“.
   5. Warte weitere **14 Tage**.
   6. Falls weiterhin keine Eingangsbestätigung vorliegt:
      - Setze den Status auf **6 - Keine Reaktion**.
   7. Nach insgesamt **3 Monaten** auf Status 6 ohne Rückmeldung:
-     - Setze den Status auf **3 - Abgelehnt**.
+     - Setze den Status auf **7 - Abgelehnt**.
 
 ---
 
@@ -39,17 +39,17 @@
 
 - **Aktionen:**
 
-  1. Warte **25 Tage**.
+  1. Warte **21 Tage**.
   2. Falls keine Rückmeldung vorliegt:
      - Erstelle eine Nachfass-Aufgabe: „Bearbeitungsstand nachfragen“.
-  3. Warte weitere **10 Tage**.
+  3. Warte weitere **14 Tage**.
   4. Falls weiterhin keine Rückmeldung vorliegt:
      - Erstelle eine Nachfass-Aufgabe: „Erneut Bearbeitungsstand nachfragen“.
   5. Warte weitere **14 Tage**.
   6. Falls weiterhin keine Rückmeldung vorliegt:
      - Setze den Status auf **6 - Keine Reaktion**.
   7. Nach insgesamt **3 Monaten** auf Status 6 ohne Rückmeldung:
-     - Setze den Status auf **3 - Abgelehnt**.
+     - Setze den Status auf **7 - Abgelehnt**.
 
 ---
 
@@ -59,7 +59,7 @@
 
 - **Aktionen:**
 
-  1. Warte **25 Tage**.
+  1. Warte **21 Tage**.
   2. Falls keine Rückmeldung vorliegt:
      - Erstelle eine Nachfass-Aufgabe: „Bearbeitungsstand prüfen“.
   3. Falls eine Rückmeldung vorliegt:
@@ -84,7 +84,7 @@
      - Datum des Gesprächs.
      - Art des Gesprächs (z. B. Teams, Zoom, vor Ort).
      - Ansprechpartner, wenn vorhanden.
-  2. Nach dem Gespräch: Warte **20 Tage**.
+  2. Nach dem Gespräch: Warte **14 Tage**.
   3. Falls keine Rückmeldung vorliegt:
      - Erstelle eine Nachfass-Aufgabe: „Nachfassen nach Gespräch“.
   4. Warte weitere **14 Tage**.
@@ -115,7 +115,7 @@
 
 - **Aktionen:**
 
-  1. Warte bis zu **3 Monate** nach der lezten Nachfrage.
+  1. Warte bis zu **3 Monate** nach der letzten Nachfrage.
   2. Falls weiterhin keine Rückmeldung vorliegt:
      - Setze den Status auf **7 - Abgelehnt**.
 
