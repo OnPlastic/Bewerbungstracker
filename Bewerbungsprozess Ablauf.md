@@ -84,7 +84,7 @@
      - Datum des Gesprächs.
      - Art des Gesprächs (z. B. Teams, Zoom, vor Ort).
      - Ansprechpartner, wenn vorhanden.
-  2. Nach dem Gespräch: Warte **14 Tage**.
+  2. Nach dem Gespräch: Warte **21 Tage**.
   3. Falls keine Rückmeldung vorliegt:
      - Erstelle eine Nachfass-Aufgabe: „Nachfassen nach Gespräch“.
   4. Warte weitere **14 Tage**.
@@ -115,7 +115,7 @@
 
 - **Aktionen:**
 
-  1. Warte bis zu **3 Monate** nach der letzten Nachfrage.
+  1. Warte bis zu **3 Monate**(90 Tage) nach der letzten Nachfrage.
   2. Falls weiterhin keine Rückmeldung vorliegt:
      - Setze den Status auf **7 - Abgelehnt**.
 

@@ -138,8 +138,8 @@ function handleStatus1(row, index, sheet) {
         FIRST_FOLLOWUP_COLUMN_INDEX
       );
     },
-    // Nach weiteren 10 Tagen erneut Eingangsbestätigung nachfragen
-    24: () => {
+    // Nach weiteren 14 Tagen erneut Eingangsbestätigung nachfragen
+    28: () => {
       createEmailFromTemplate(
         "status1_second_request.txt",
         placeholderValues,
@@ -154,7 +154,7 @@ function handleStatus1(row, index, sheet) {
         SECOND_FOLLOWUP_COLUMN_INDEX
       );
     },
-    38: () => {
+    42: () => {
       // Status auf "Keine Reaktion" setzen
       sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6);
       createTask(
@@ -222,7 +222,7 @@ function handleStatus2(row, index, sheet) {
     row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
 
   const actions = {
-    25: () => {
+    21: () => {
       createEmailFromTemplate(
         "status2_first_request.txt",
         placeholderValues,
@@ -310,7 +310,7 @@ function handleStatus3(row, index, sheet) {
     row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
 
   const actions = {
-    25: () => {
+    21: () => {
       createEmailFromTemplate(
         "status3_last_request.txt",
         placeholderValues,
@@ -325,7 +325,7 @@ function handleStatus3(row, index, sheet) {
         SECOND_FOLLOWUP_COLUMN_INDEX
       );
     },
-    39: () => {
+    35: () => {
       // Status auf "Keine Reaktion" setzen
       sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6);
       createTask(
@@ -369,7 +369,7 @@ function handleStatus4(row, index, sheet) {
     row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
 
   const actions = {
-    20: () => {
+    21: () => {
       createEmailFromTemplate(
         "status4_followup_interview.txt",
         placeholderValues,
@@ -384,7 +384,7 @@ function handleStatus4(row, index, sheet) {
         FIRST_FOLLOWUP_COLUMN_INDEX
       );
     },
-    34: () => {
+    35: () => {
       // Status auf "Keine Reaktion" setzen
       sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6);
       createTask(
