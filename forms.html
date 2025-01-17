@@ -4,6 +4,7 @@
 <!-- Eingabemaske für Bewerbungsinformationen -->
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bewerbungstracker - Neue Bewerbung</title>
     <style>
       /* Standard-Darstellung für große Bildschirme */
@@ -56,6 +57,29 @@
       .error {
         color: red;
         font-size: 14px;
+      }
+
+      /* Responsive Styles für Smartphones */
+      @media (max-with: 600px) {
+        body {
+          margin: 10px;
+        }
+        h1 {
+          font-size: 20px;
+        }
+        form {
+          width: 100%;
+          padding: 10px;
+        }
+        input,
+        select,
+        textarea {
+          padding: 8px;
+        }
+        button {
+          width: 100%;
+          padding: 12px;
+        }
       }
     </style>
   </head>
@@ -138,7 +162,7 @@
           <input type="date" id="datumRueckmeldung" name="datumRueckmeldung" />
         </div>
         <div style="flex: 1">
-          <label for="datumGespräch">Bewerbungsgespräch</label>
+          <label for="datumGespräch">Datum Bew.gespräch</label>
           <input type="date" id="datumGespräch" name="datumGespräch" />
         </div>
       </div>
