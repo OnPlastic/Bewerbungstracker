@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<!-- Skript Version:4.1 A:sIn -->
+<!-- Skript Version:5.0 A:sIn -->
 <!-- Bewerbungstracker -->
 <!-- Eingabemaske für Bewerbungsinformationen -->
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.2" />
     <title>Bewerbungstracker - Neue Bewerbung</title>
     <style>
+      * {
+        box-sizing: border-box;
+      }
       /* Standard-Darstellung für große Bildschirme */
       body {
         font-family: Arial, sans-serif;
@@ -60,16 +63,23 @@
       }
 
       /* Responsive Styles für Smartphones */
-      @media (max-with: 600px) {
+      @media (max-width: 600px) {
         body {
           margin: 10px;
         }
         h1 {
-          font-size: 20px;
+          text-align: center;
+          /* font-size: 20px; */
+          max-width: 600px;
         }
         form {
           width: 100%;
           padding: 10px;
+          max-width: 600px;
+        }
+        div[style*="flex: 1"] {
+          flex: none;
+          width: calc(33.33% - 6.67px); /* Drei Spalten plus gap: 10px */
         }
         input,
         select,
@@ -84,7 +94,7 @@
     </style>
   </head>
   <body>
-    <h1>Bewerbungstracker by s|n</h1>
+    <h1>Bewerbungstracker by S|N</h1>
     <div class="clear"></div>
     <form id="bewerbungForm">
       <!-- Bewerbungsauswahl -->
@@ -152,7 +162,7 @@
       <label for="loginInfo">Login Informationen</label>
       <textarea id="loginInfo" name="loginInfo"></textarea>
 
-      <div style="display: flex; gap: 10px; align-items: center">
+      <div style="display: flex; width: 100%; gap: 5px; align-items: center">
         <div style="flex: 1">
           <label for="datum">Datum der Bewerbung</label>
           <input type="date" id="datum" name="datum" />
@@ -181,7 +191,13 @@
       <label for="kommentar">Kommentar</label>
       <textarea id="kommentar" name="kommentar"></textarea>
 
-      <button type="button" onclick="submitForm()">Speichern</button>
+      <button
+        type="button"
+        onclick="submitForm()"
+        style="display: block; margin: 20px auto"
+      >
+        Speichern
+      </button>
 
       <!-- Verstecktes Eingabefeld für die Bew.ID -->
       <input type="hidden" id="applicationId" name="applicationId" />

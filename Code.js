@@ -1,4 +1,4 @@
-//*****Script V:3.0 A:sIn*****
+//*****Script V:5.0 A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // Code.gs
@@ -47,13 +47,17 @@ function mainProcess() {
  * @returns {GoogleAppsScript.HTML.HtmlOutput} Die HTML-Seite.
  */
 function doGet(e) {
+  Logger.log("[INFO] Seite wurde neu geladen durch doGet().");
   // Simuliertes Datum aus dem Testmode falls, gesetzt
   const testDate = getToday().toISOString().split("T")[0];
   return HtmlService.createHtmlOutputFromFile("forms.html")
+    .addMetaTag(`viewport`, `width=device-width, initial-scale=1.0`) // Viewport Einstellungen
     .append(`<script>var simulatedDate = "${testDate}";</script>`)
-    .setTitle("Bewerbungstracker")
+    .setTitle("Bewerbungstracker");
+  /**
     .setWidth(700)
     .setHeight(900);
+    */
 }
 
 /**
@@ -138,8 +142,8 @@ function handleStatus1(row, index, sheet) {
         FIRST_FOLLOWUP_COLUMN_INDEX
       );
     },
-    // Nach weiteren 14 Tagen erneut Eingangsbestätigung nachfragen
-    28: () => {
+    // Nach weiteren 10 Tagen erneut Eingangsbestätigung nachfragen
+    24: () => {
       createEmailFromTemplate(
         "status1_second_request.txt",
         placeholderValues,
@@ -154,7 +158,7 @@ function handleStatus1(row, index, sheet) {
         SECOND_FOLLOWUP_COLUMN_INDEX
       );
     },
-    42: () => {
+    38: () => {
       // Status auf "Keine Reaktion" setzen
       sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6);
       createTask(
@@ -222,7 +226,7 @@ function handleStatus2(row, index, sheet) {
     row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
 
   const actions = {
-    21: () => {
+    25: () => {
       createEmailFromTemplate(
         "status2_first_request.txt",
         placeholderValues,
@@ -310,7 +314,7 @@ function handleStatus3(row, index, sheet) {
     row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
 
   const actions = {
-    21: () => {
+    25: () => {
       createEmailFromTemplate(
         "status3_last_request.txt",
         placeholderValues,
@@ -325,7 +329,7 @@ function handleStatus3(row, index, sheet) {
         SECOND_FOLLOWUP_COLUMN_INDEX
       );
     },
-    35: () => {
+    39: () => {
       // Status auf "Keine Reaktion" setzen
       sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6);
       createTask(
@@ -369,7 +373,7 @@ function handleStatus4(row, index, sheet) {
     row[EMAIL_COLUMN_INDEX] || "ACHTUNG.ERSETZEN@example.com";
 
   const actions = {
-    21: () => {
+    20: () => {
       createEmailFromTemplate(
         "status4_followup_interview.txt",
         placeholderValues,
@@ -384,7 +388,7 @@ function handleStatus4(row, index, sheet) {
         FIRST_FOLLOWUP_COLUMN_INDEX
       );
     },
-    35: () => {
+    34: () => {
       // Status auf "Keine Reaktion" setzen
       sheet.getRange(index + 1, STATUS_COLUMN_INDEX + 1).setValue(6);
       createTask(

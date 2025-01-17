@@ -1,4 +1,4 @@
-//*****Script V:3.0-final A:sIn*****
+//*****Script V:5.0-final A:sIn*****
 // Bewerbungstracker
 // - App für den Bewerbungsprozess -
 // - Testszenarien -
@@ -12,7 +12,7 @@
 const TEST_MODE = false; // false/true
 
 // Testdatum: Hier das simulierte Datum festlegen
-const TEST_DATE = new Date("2025-03-03");
+const TEST_DATE = new Date("2025-02-07");
 
 /**
  * Liefert das heutige Datum oder das simulierte Testdatum, falls der Testmodus aktiv ist.
