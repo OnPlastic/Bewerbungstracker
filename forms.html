@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Skript Version:3.0 A:sIn -->
+<!-- Skript Version:4.0 A:sIn -->
 <!-- Bewerbungstracker -->
 <!-- Eingabemaske für Bewerbungsinformationen -->
 <html>
@@ -81,7 +81,7 @@
           onclick="applySelectedApplication()"
           style="margin-top: 5px"
         >
-          Übernehmen
+          Öffnen
         </button>
       </div>
       <label for="neuebewerbung" class="highlight-label"
@@ -310,6 +310,7 @@
       function clearForm() {
         document.getElementById("bewerbungForm").reset(); // Setzt das Formular zurück
         document.getElementById("errorUnternehmen").textContent = ""; // Entfernt mögliche Fehlermeldungen
+        document.getElementById("applicationId").value = ""; // Setzt die BewerbungsID zurück
 
         // Debug-Modus: Formular-Reset loggen
         if (DEBUG_MODE) {
@@ -317,9 +318,9 @@
         }
       }
 
-      //Funktion zum Neuladen der Seite
+      // Funktion zum Neuladen der Seite
       function reloadPage() {
-        google.script.run.doGet(); 
+        google.script.run.doGet(); // Lädt die Seite neu
       }
 
       // Rufe die Funktion beim Laden der Seite auf
