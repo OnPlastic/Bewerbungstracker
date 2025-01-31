@@ -49,7 +49,8 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 
 #### 3.1 Neues Projekt erstellen
 
-1. Öffne [Google Apps Script](https://script.google.com/) und erstelle ein neues Projekt.
+1. Öffne [Google Drive](https://drive.google.com/drive/my-drive) und erstelle ein neues "Apps Script" Projekt.´  
+`+Neu` - `Mehr>` - `Apps Script`
 2. Benenne das Projekt, z. B. **"Bewerbungstracker"**.
 
 ![AppsScriptEditor-Fenster](BilderDoku/AppsScriptEditor.png "Benutzeroberfläche AppsScriptEditor")
@@ -65,7 +66,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
    - Die Dateien im Repository haben die Endung `.js`.
    - Im Google Apps Skript Editor wird die Endung automatisch auf `.gs` geändert. Gebe beim Erstellen der Dateien daher nur den Namen an, z. B. `InitializeProject`, `Test`, `Utils`.
 
-#### 3.3 Füge im Google Apps Script-Editor unter **Dienste** folgende hinzu
+#### 3.3 Füge im Google Apps Script-Editor unter "**Dienste**" folgende hinzu
 
 - Google-`Drive`-API
 - `Gmail`-API
@@ -113,7 +114,7 @@ Stelle sicher, dass folgende Dateien und Ordner im Repository enthalten sind:
 
 ### 5. Templates in Google Drive einrichten
 
-1. Öffne Google Drive und navigiere zum Ordner namens **./Bewerbungen/templates**.
+1. Öffne Google Drive und navigiere zum Ordner namens, **./Bewerbungen/templates**.
 2. Lade die Dateien aus dem Ordner **templates/** des Repositories in diesen Unterordner hoch.
 
 ---
